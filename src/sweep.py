@@ -48,6 +48,21 @@ def build_grid():
     g.append(cfg("fpn", se, prep="dog_xwide", label="x2"))
     g.append(cfg("deeplabv3plus", "efficientnet-b3", loss="bce_lovasz", label="x3"))
     g.append(cfg("manet", "efficientnet-b3", label="x4"))
+    # ── G. 확장: 추가 백본(대형/이질) ──
+    for e in ["efficientnet-b6", "mit_b2", "resnet101", "tu-regnety_080", "densenet121"]:
+        g.append(cfg("unet", e))
+    # ── H. 확장: 추가 아키텍처×백본 크로스 ──
+    g.append(cfg("fpn", "efficientnet-b5"))
+    g.append(cfg("unetpp", "efficientnet-b3"))
+    g.append(cfg("pspnet", "efficientnet-b3"))
+    g.append(cfg("manet", se))
+    # ── I. 확장: 추가 전처리(band-pass/형태학) ──
+    for p in ["dog", "bilateral_dog", "tophat", "clahe_dog", "highpass"]:
+        g.append(cfg("unet", se, prep=p, label=f"prep_{p}"))
+    # ── J. 확장: 추가 하이퍼파라미터 ──
+    g.append(cfg("unet", se, extra=["--lr", "2e-4"], label="lr2e4"))
+    g.append(cfg("unet", se, extra=["--posweight", "8,16,1,2"], label="pw8_16"))
+    g.append(cfg("unet", se, extra=["--tv-gamma", "2.0"], label="tvg2"))
     return g
 
 
