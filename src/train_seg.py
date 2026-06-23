@@ -33,7 +33,7 @@ class BCEDice(nn.Module):
 class FocalTverskyBCE(nn.Module):
     """희귀·작은 결함용 — Tversky(beta>alpha=FN 더 처벌) + focal + BCE(per-class pos_weight).
     C1/C2 붕괴(전부 빈칸 예측) 방지."""
-    def __init__(self, alpha=0.3, beta=0.7, gamma=1.3, w_bce=0.5, w_tv=0.5, pos_weight=None):
+    def __init__(self, alpha=0.3, beta=0.7, gamma=1.3, w_bce=0.5, w_tv=0.5, pos_weight=None):  # noqa
         super().__init__()
         self.a, self.b, self.g = alpha, beta, gamma
         self.w_bce, self.w_tv = w_bce, w_tv
@@ -87,6 +87,8 @@ def main():
                     choices=["none", "dog", "retinex", "clahe", "gamma", "sharpen", "clahe_dog"])
     ap.add_argument("--oversample", action="store_true", help="희귀클래스(C1/C2) 포함 이미지 가중 샘플링")
     ap.add_argument("--posweight", default="", help="클래스별 BCE pos_weight, 예: 4,8,1,2")
+    ap.add_argument("--tv-beta", type=float, default=0.7, help="Tversky beta(클수록 FN 더 처벌)")
+    ap.add_argument("--tv-gamma", type=float, default=1.3, help="FocalTversky gamma")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
 
@@ -130,7 +132,7 @@ def main():
     if args.posweight:
         pw = torch.tensor([float(x) for x in args.posweight.split(",")], device=device).view(-1, 1, 1)
     if args.loss == "focaltversky":
-        crit = FocalTverskyBCE(pos_weight=pw)
+        crit = FocalTverskyBCE(alpha=1 - args.tv_beta, beta=args.tv_beta, gamma=args.tv_gamma, pos_weight=pw)
     elif args.loss in ("lovasz", "bce_lovasz"):
         from segmentation_models_pytorch.losses import LovaszLoss
         lov = LovaszLoss(mode="multilabel")
