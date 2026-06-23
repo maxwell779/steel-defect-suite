@@ -1,0 +1,30 @@
+# data & models (대용량·라이선스 — 레포 미포함)
+data/
+experiments/
+*.pt
+*.pth
+*.ckpt
+*.zip
+
+# python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+venv/
+
+# node / web
+node_modules/
+web/dist/
+web/.vite/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# scratch
+scratch/
+*.log

@@ -1,0 +1,21 @@
+# core
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+pillow
+opencv-python
+
+# deep learning
+torch
+torchvision
+segmentation-models-pytorch
+timm
+albumentations
+
+# serving (web demo)
+fastapi
+uvicorn
+pydantic
+python-multipart
