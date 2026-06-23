@@ -83,8 +83,7 @@ def main():
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--limit", type=int, default=0, help="스모크용 train 표본 상한(0=전체)")
     ap.add_argument("--loss", default="bcedice", choices=["bcedice", "focaltversky", "lovasz", "bce_lovasz"])
-    ap.add_argument("--preproc", default="none",
-                    choices=["none", "dog", "retinex", "clahe", "gamma", "sharpen", "clahe_dog"])
+    ap.add_argument("--preproc", default="none", choices=list(data.PREPROCS.keys()))
     ap.add_argument("--oversample", action="store_true", help="희귀클래스(C1/C2) 포함 이미지 가중 샘플링")
     ap.add_argument("--posweight", default="", help="클래스별 BCE pos_weight, 예: 4,8,1,2")
     ap.add_argument("--tv-beta", type=float, default=0.7, help="Tversky beta(클수록 FN 더 처벌)")

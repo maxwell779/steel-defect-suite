@@ -285,12 +285,21 @@ PREPROCS = {
 }
 
 
+class PreprocFn:
+    """모듈 레벨 picklable 콜러블 (DataLoader 멀티프로세스 워커용 — lambda 불가)."""
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self, image, **kwargs):
+        fn = PREPROCS.get(self.name)
+        return fn(image) if fn else image
+
+
 def build_tfms(train=True, preproc="none"):
     import albumentations as A
     from albumentations.pytorch import ToTensorV2
     mean, std = (0.344, 0.344, 0.344), (0.18, 0.18, 0.18)  # 그레이 강판
-    fn = PREPROCS.get(preproc)
-    pre = [A.Lambda(image=lambda x, **k: fn(x), name=preproc)] if fn else []
+    pre = [A.Lambda(image=PreprocFn(preproc), name=preproc)] if PREPROCS.get(preproc) else []
     if train:
         return A.Compose(pre + [
             A.HorizontalFlip(p=0.5),
