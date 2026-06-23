@@ -15,9 +15,9 @@ from src.metrics import mean_dice, per_class_dice
 
 
 class BCEDice(nn.Module):
-    def __init__(self, w_bce=0.6, w_dice=0.4):
+    def __init__(self, w_bce=0.6, w_dice=0.4, pos_weight=None):
         super().__init__()
-        self.bce = nn.BCEWithLogitsLoss()
+        self.bce = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
         self.w_bce, self.w_dice = w_bce, w_dice
 
     def forward(self, logits, target):
@@ -28,6 +28,26 @@ class BCEDice(nn.Module):
         denom = p.sum(dims) + target.sum(dims)
         dice = 1 - ((2 * inter + 1) / (denom + 1)).mean()
         return self.w_bce * bce + self.w_dice * dice
+
+
+class FocalTverskyBCE(nn.Module):
+    """희귀·작은 결함용 — Tversky(beta>alpha=FN 더 처벌) + focal + BCE(per-class pos_weight).
+    C1/C2 붕괴(전부 빈칸 예측) 방지."""
+    def __init__(self, alpha=0.3, beta=0.7, gamma=1.3, w_bce=0.5, w_tv=0.5, pos_weight=None):
+        super().__init__()
+        self.a, self.b, self.g = alpha, beta, gamma
+        self.w_bce, self.w_tv = w_bce, w_tv
+        self.bce = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+
+    def forward(self, logits, target):
+        p = torch.sigmoid(logits)
+        dims = (0, 2, 3)
+        tp = (p * target).sum(dims)
+        fp = (p * (1 - target)).sum(dims)
+        fn = ((1 - p) * target).sum(dims)
+        ti = (tp + 1) / (tp + self.a * fp + self.b * fn + 1)   # per-class Tversky
+        tv = ((1 - ti) ** self.g).mean()
+        return self.w_bce * self.bce(logits, target) + self.w_tv * tv
 
 
 @torch.no_grad()
@@ -55,12 +75,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fold", type=int, default=0)
     ap.add_argument("--encoder", default="se_resnext50_32x4d")
-    ap.add_argument("--arch", default="unet", choices=["unet", "fpn", "unetpp"])
+    ap.add_argument("--arch", default="unet",
+                    choices=["unet", "fpn", "unetpp", "deeplabv3plus", "pspnet", "manet", "linknet", "pan"])
     ap.add_argument("--epochs", type=int, default=12)
     ap.add_argument("--bs", type=int, default=12)
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--limit", type=int, default=0, help="스모크용 train 표본 상한(0=전체)")
+    ap.add_argument("--loss", default="bcedice", choices=["bcedice", "focaltversky", "lovasz", "bce_lovasz"])
+    ap.add_argument("--preproc", default="none",
+                    choices=["none", "dog", "retinex", "clahe", "gamma", "sharpen", "clahe_dog"])
+    ap.add_argument("--oversample", action="store_true", help="희귀클래스(C1/C2) 포함 이미지 가중 샘플링")
+    ap.add_argument("--posweight", default="", help="클래스별 BCE pos_weight, 예: 4,8,1,2")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
 
@@ -72,20 +98,50 @@ def main():
         tr_ids = tr_ids[:args.limit]; va_ids = va_ids[:max(200, args.limit // 4)]
     print(f"[data] train {len(tr_ids)} / val {len(va_ids)} (fold {args.fold})")
 
-    tr_ds = data.SteelSegDataset(tr_ids, ann, data.build_tfms(True))
-    va_ds = data.SteelSegDataset(va_ids, ann, data.build_tfms(False))
-    tr_ld = DataLoader(tr_ds, batch_size=args.bs, shuffle=True, num_workers=args.workers,
-                       pin_memory=True, drop_last=True, persistent_workers=args.workers > 0)
+    tr_ds = data.SteelSegDataset(tr_ids, ann, data.build_tfms(True, args.preproc))
+    va_ds = data.SteelSegDataset(va_ids, ann, data.build_tfms(False, args.preproc))
+    # 희귀클래스 가중 샘플러 — 이미지가 가진 클래스 중 가장 희귀한 것 기준 가중
+    if args.oversample:
+        from torch.utils.data import WeightedRandomSampler
+        freq = {1: 897, 2: 247, 3: 5150, 4: 801}  # 인스턴스 빈도(EDA)
+        w = []
+        for iid in tr_ids:
+            cs = ann.get(iid, {}).keys()
+            w.append(max([5150 / freq[c] for c in cs], default=1.0))  # 희귀할수록 가중↑
+        sampler = WeightedRandomSampler(w, num_samples=len(tr_ids), replacement=True)
+        tr_ld = DataLoader(tr_ds, batch_size=args.bs, sampler=sampler, num_workers=args.workers,
+                           pin_memory=True, drop_last=True, persistent_workers=args.workers > 0)
+        print(f"[sampler] 희귀클래스 오버샘플 ON (가중 max {max(w):.1f})")
+    else:
+        tr_ld = DataLoader(tr_ds, batch_size=args.bs, shuffle=True, num_workers=args.workers,
+                           pin_memory=True, drop_last=True, persistent_workers=args.workers > 0)
     va_ld = DataLoader(va_ds, batch_size=args.bs, shuffle=False, num_workers=args.workers,
                        pin_memory=True, persistent_workers=args.workers > 0)
 
-    Arch = {"unet": smp.Unet, "fpn": smp.FPN, "unetpp": smp.UnetPlusPlus}[args.arch]
+    Arch = {"unet": smp.Unet, "fpn": smp.FPN, "unetpp": smp.UnetPlusPlus,
+            "deeplabv3plus": smp.DeepLabV3Plus, "pspnet": smp.PSPNet,
+            "manet": smp.MAnet, "linknet": smp.Linknet, "pan": smp.PAN}[args.arch]
     model = Arch(encoder_name=args.encoder, encoder_weights="imagenet",
                  in_channels=3, classes=config.N_CLASSES).to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=args.epochs)
     scaler = torch.amp.GradScaler("cuda")
-    crit = BCEDice()
+    pw = None
+    if args.posweight:
+        pw = torch.tensor([float(x) for x in args.posweight.split(",")], device=device).view(-1, 1, 1)
+    if args.loss == "focaltversky":
+        crit = FocalTverskyBCE(pos_weight=pw)
+    elif args.loss in ("lovasz", "bce_lovasz"):
+        from segmentation_models_pytorch.losses import LovaszLoss
+        lov = LovaszLoss(mode="multilabel")
+        if args.loss == "lovasz":
+            crit = lov
+        else:
+            bce = nn.BCEWithLogitsLoss(pos_weight=pw)
+            crit = lambda lo, t: 0.5 * bce(lo, t) + 0.5 * lov(lo, t)
+    else:
+        crit = BCEDice(pos_weight=pw)
+    print(f"[loss] {args.loss}  preproc={args.preproc}  pos_weight={args.posweight or 'none'}")
 
     name = f"stage2_seg_{args.arch}_{args.encoder}_f{args.fold}{args.tag}"
     outdir = os.path.join(config.EXP, name); os.makedirs(outdir, exist_ok=True)
@@ -119,9 +175,18 @@ def main():
             best_ms_dice, best_ms = md, ms
     print(f"\n[BEST] val_dice={base:.4f} (no postproc) → min_size={best_ms} "
           f"val_dice={best_ms_dice:.4f}")
+    # per-class 검출률(decompose) — 빈마스크 착시 방지용 진짜 지표
+    from src.analyze_seg import decompose
+    _, _, P, G = evaluate(model, va_ld, device, thr=0.5, min_size=best_ms)
+    dec = decompose(P, G)
+    recalls = [round(d["defect_recall"], 4) for d in dec]
+    print(f"[per-class 검출률] {recalls}  (C1,C2가 0이면 실패)")
     result = {"name": name, "fold": args.fold, "encoder": args.encoder, "arch": args.arch,
+              "loss": args.loss, "preproc": args.preproc,
               "best_val_dice": base, "best_per_class": base_pc,
               "best_min_size": best_ms, "best_val_dice_postproc": best_ms_dice,
+              "defect_recall": recalls,
+              "min_recall": float(min(recalls)),  # 가장 약한 클래스(랭킹용)
               "history": hist}
     with open(os.path.join(outdir, "metrics.json"), "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)

@@ -54,6 +54,15 @@
 7. **CV**: 5~10 fold, threshold는 val에서만.
 8. **성능 기준선**: 단일 강한 모델 ~0.90 Dice(private), 상위 앙상블 **0.908~0.918**. (다른 팀은 Dice 자체가 없음.)
 
+### 2.3 심화 조사 — 상위권의 "큰 이득" 레버 (2026-06-23 추가)
+- **① 분류 게이트 = 가장 큰 이득**: classifier로 "이미지에 해당 결함 있나" 판정 → 없다고 하면 세그 예측 무시(또는 픽셀 임계 상향). empty FP가 Dice에서 치명적이라 **FP 통제가 순수 세그 최적화보다 가치 큼**.
+- **② 다중 아키텍처 앙상블**: 1위 = UNet+FPN × {effnet-b1/b3, resnet34}. 단일 최강 = FPN+se_resnext50.
+- **③ 점진적 crop 학습**: 256×256 → 512×256 → 1024×256 → 풀해상도 순으로 키우며 학습.
+- **④ 블랙 보더 처리**: test에 검은 테두리 이미지多 → 검은 영역 crop(Otsu 임계)해 비-검정 영역만 학습이 더 나음(도메인 시프트).
+- **⑤ 3-임계 후처리**: `max_prob_thresh`(이 값 넘는 픽셀 없으면 마스크 통째 버림) + `min_prob_thresh`(픽셀 이진화) + `min_area_thresh`(작은 마스크 제거). FP 억제의 표준 트릭.
+- **⑥ 노이즈 라벨 대응**: 라벨 노이즈가 많아 Lovász/소프트 기법·(고급) Gumbel noise가 도움.
+- 출처: [1st place writeup](https://www.kaggle.com/competitions/severstal-steel-defect-detection/writeups/1st-place-solution), khornlund/TheoViel GitHub, [diyago 블로그](https://diyago.github.io/2019/11/20/kaggle-severstal.html).
+
 ---
 
 ## 3. 우리의 고도화 전략 (A100 서버 활용)
