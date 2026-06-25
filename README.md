@@ -18,6 +18,12 @@
 - 분류 게이트(멀티라벨 EfficientNet-B3): AUROC 0.9954, 결함 recall 95% 유지 시 정상 이미지 약 98% 차단.
 - 위 수치는 train 이미지단위 held-out fold 기준이다. 대회 test 라벨은 비공개라 공개 리더보드(private ~0.90–0.918)와 동일 조건 비교는 아니다.
 
+![results](docs/images/results_dice.png)
+
+세그멘테이션 예측 예시 — 4색 마스크 오버레이(C1 빨강 / C2 초록 / C3 파랑 / C4 노랑):
+
+![overlay](docs/images/seg_overlay.png)
+
 ## 접근
 
 | 단계 | 내용 |
