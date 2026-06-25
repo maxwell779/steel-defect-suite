@@ -1,0 +1,48 @@
+name: Deploy console to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+    paths: ['web/ui/**', 'web/static/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build (Pages 하위경로 base)
+        working-directory: web/ui
+        run: |
+          npm ci
+          npm run build -- --base=/steel-defect-suite/
+      - name: 정적 데이터 복사 (experiments/dashboard/samples)
+        run: |
+          mkdir -p web/ui/dist/static
+          cp -r web/static/* web/ui/dist/static/
+          touch web/ui/dist/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/ui/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
