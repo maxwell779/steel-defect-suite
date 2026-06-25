@@ -62,9 +62,14 @@ export default function SegViewer({ samples }) {
         </div>
       </div>
 
-      <div className="thumbs">
-        {samples.map((s, i) => <img key={s.id} src={sampleUrl(s.base)} className={i === idx && !upload ? 'sel' : ''} onClick={() => { setUpload(null); setIdx(i); }} />)}
-        <label className="toggle" style={{ cursor: 'pointer' }}>＋업로드<input type="file" accept="image/*" hidden onChange={(e) => e.target.files[0] && setUpload(e.target.files[0])} /></label>
+      <div className="seg-nav">
+        <button className="navbtn" disabled={!upload && idx <= 0}
+          onClick={() => { setUpload(null); setIdx((i) => Math.max(0, i - 1)); }}>◀ 이전</button>
+        <span className="seg-nav-id mono">{upload ? '업로드 이미지' : `${samples[idx]?.id || ''}  ·  ${idx + 1}/${samples.length}`}</span>
+        <button className="navbtn" disabled={!upload && idx >= samples.length - 1}
+          onClick={() => { setUpload(null); setIdx((i) => Math.min(samples.length - 1, i + 1)); }}>다음 ▶</button>
+        <label className="navbtn" style={{ cursor: 'pointer', marginLeft: 'auto' }}>＋ 업로드
+          <input type="file" accept="image/*" hidden onChange={(e) => e.target.files[0] && setUpload(e.target.files[0])} /></label>
       </div>
 
       <canvas ref={cv} width="1600" height="256" className="seg-canvas" />
