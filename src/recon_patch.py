@@ -48,6 +48,8 @@ def main():
     ap.add_argument("--per_img", type=int, default=256, help="이미지당 샘플 패치 수")
     ap.add_argument("--bank", type=int, default=30000, help="코어셋 뱅크 크기")
     ap.add_argument("--topk", type=int, default=50, help="이미지 점수=상위 k 패치거리 평균")
+    ap.add_argument("--layer", type=int, default=2, help="resnet feature 레이어 인덱스(2 or 3)")
+    ap.add_argument("--score", default="topk", choices=["topk", "max", "mean"])
     ap.add_argument("--bs", type=int, default=8)
     args = ap.parse_args()
     torch.manual_seed(config.SEED); np.random.seed(config.SEED)
@@ -59,7 +61,7 @@ def main():
     y = np.array([0 if is_normal(i, ann) else 1 for i in va])
     print(f"[data] 정상뱅크 {len(normals)} / val {len(va)} (결함 {int(y.sum())}, 정상 {int((1-y).sum())})", flush=True)
 
-    model = timm.create_model("resnet18", pretrained=True, features_only=True, out_indices=(2,)).to(dev).eval()
+    model = timm.create_model("resnet18", pretrained=True, features_only=True, out_indices=(args.layer,)).to(dev).eval()
 
     # ── 뱅크 구성 ──
     t0 = time.time(); pool = []
@@ -83,7 +85,12 @@ def main():
         for b in range(fb.shape[0]):
             d = torch.cdist(fb[b], bank)                    # (Np,M)
             nn = d.min(1).values                            # 패치별 최근접 거리
-            s = torch.topk(nn, min(args.topk, nn.numel())).values.mean().item()
+            if args.score == "max":
+                s = nn.max().item()
+            elif args.score == "mean":
+                s = nn.mean().item()
+            else:
+                s = torch.topk(nn, min(args.topk, nn.numel())).values.mean().item()
             scores.append(s)
     scores = np.array(scores)
 
