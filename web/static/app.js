@@ -3,6 +3,12 @@ const $ = s => document.querySelector(s);
 const rgb = a => `rgb(${a[0]},${a[1]},${a[2]})`;
 let SAMPLES = [], EXP = null, curUpload = null;
 
+// 백엔드(/api) 우선, 없으면 정적 파일로 폴백 → 정적 호스팅에서도 동작
+async function getJSON(api, staticPath) {
+  try { const r = await fetch(api); if (r.ok) return await r.json(); } catch {}
+  try { return await (await fetch(staticPath)).json(); } catch { return {}; }
+}
+
 // ── 탭 ──
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
@@ -19,8 +25,8 @@ async function boot() {
     else { el.className = 'badge off'; el.textContent = '● 정적 폴백(모델 미로드)'; }
   } catch { $('#status').className = 'badge off'; $('#status').textContent = '● 오프라인'; }
 
-  const sj = await (await fetch('/api/samples')).json(); SAMPLES = sj.samples || [];
-  EXP = await (await fetch('/api/experiments')).json();
+  const sj = await getJSON('/api/samples', 'samples/samples.json'); SAMPLES = sj.samples || [];
+  EXP = await getJSON('/api/experiments', 'experiments.json');
   renderConsole(); renderThumbs(); renderLegend(); renderGate(); renderCharts(); renderVs();
   if (SAMPLES.length) selectSample(0);
 }
@@ -53,7 +59,7 @@ const vis = [true, true, true, true];
 
 function renderThumbs() {
   $('#thumbs').innerHTML = SAMPLES.map((s, i) =>
-    `<img src="/static/samples/${s.base}" data-i="${i}" title="${s.id}">`).join('');
+    `<img src="samples/${s.base}" data-i="${i}" title="${s.id}">`).join('');
   document.querySelectorAll('#thumbs img').forEach(im => im.onclick = () => selectSample(+im.dataset.i));
 }
 function renderLegend() {
@@ -108,7 +114,7 @@ async function selectSample(i) {
   } catch {
     SEG = null;                               // 정적 폴백
     const cv = $('#cv'), ctx = cv.getContext('2d');
-    const b = new Image(); b.onload = () => { ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(b, 0, 0, cv.width, cv.height); const o = new Image(); o.onload = () => ctx.drawImage(o, 0, 0, cv.width, cv.height); o.src = '/static/samples/' + s.overlay; }; b.src = '/static/samples/' + s.base;
+    const b = new Image(); b.onload = () => { ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(b, 0, 0, cv.width, cv.height); const o = new Image(); o.onload = () => ctx.drawImage(o, 0, 0, cv.width, cv.height); o.src = 'samples/' + s.overlay; }; b.src = 'samples/' + s.base;
     renderBars(s.per_class, s.mean_dice); $('#livenote').textContent = '정적 폴백(모델 미로드)';
   }
 }

@@ -1,0 +1,10 @@
+services:
+  console:
+    build: .
+    image: steel-console
+    ports:
+      - "8010:8010"
+    environment:
+      - STEEL_DEVICE=cpu
+    volumes:
+      - ./experiments:/app/experiments:ro   # 가중치(.pt). 없으면 정적 샘플로 동작

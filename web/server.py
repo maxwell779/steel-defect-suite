@@ -72,7 +72,8 @@ def infer_sample(id: str, min_prob: float = 0.6, max_prob: float = 0.7,
 
 @app.get("/")
 def index():
-    return FileResponse(os.path.join(STATIC, "index.html"))
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse("/static/index.html")
 
 
 app.mount("/static", StaticFiles(directory=STATIC), name="static")

@@ -22,6 +22,6 @@ STEEL_DEVICE=cpu uvicorn web.server:app --host 127.0.0.1 --port 8010
 
 ## 화면 (PRD §5)
 1. **통합 콘솔** — KPI(검사/결함율/격리/양품률/비용절감) + 결함 큐 + 최종 성능.
-2. **Segmentation** — 샘플/업로드 → 4색 마스크 오버레이 + per-class Dice/확률/면적, 후처리·게이트 슬라이더 LIVE(업로드).
+2. **Segmentation** — 샘플/업로드 → 4색 마스크 오버레이 + per-class Dice/확률/면적, 마스크 정제·게이트 슬라이더 LIVE(업로드).
 3. **Classification Gate** — 멀티라벨 확률 + empty 억제(차단/통과) + AUROC·차단율 차트.
 4. **Experiments** — 마일스톤 Dice, 레버 이득, per-class(게이트 전/후), 전처리 교차검증, 누수 폭로, 5-fold, 타팀 대비표.

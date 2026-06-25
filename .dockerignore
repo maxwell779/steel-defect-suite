@@ -1,0 +1,13 @@
+.git
+data
+logs
+docs
+experiments
+*.pt
+*.pth
+__pycache__
+**/__pycache__
+*.pyc
+.venv
+node_modules
+*.zip
