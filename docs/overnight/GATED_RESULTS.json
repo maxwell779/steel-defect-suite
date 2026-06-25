@@ -1,37 +1,38 @@
 {
   "members": [
     "stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_x3",
+    "stage2_seg_deeplabv3plus_efficientnet-b3_f0_pseudo_r2",
     "stage2_seg_fpn_se_resnext50_32x4d_f0_sw_f_fpn_se_resnext50_focaltversky_none",
     "stage2_seg_unet_se_resnext50_32x4d_f0_m2_balanced",
     "stage2_seg_unet_se_resnext50_32x4d_f0_sw_f_unet_se_resnext50_tvb085"
   ],
   "tta": true,
   "n_val": 1500,
-  "ungated_dice": 0.9534204935353439,
+  "ungated_dice": 0.9557986716020217,
   "ungated_per_class": [
-    0.965980220465158,
-    0.9919763581438835,
-    0.8681326727942521,
-    0.9875927227380816
+    0.9657787395696444,
+    0.9917967463002624,
+    0.8778324595756488,
+    0.9877867409625284
   ],
   "postproc": {
     "min_prob": 0.6,
     "max_prob": 0.7,
-    "min_area": 600
+    "min_area": 0
   },
   "clf_encoder": "efficientnet_b3",
   "gate_thr": [
     0.3,
     0.02,
-    0.5,
+    0.05,
     0.0
   ],
-  "gated_dice": 0.9558919912601874,
+  "gated_dice": 0.9572988534147199,
   "gated_per_class": [
-    0.969014658606877,
-    0.9928979143113622,
-    0.8740626693844287,
-    0.9875927227380816
+    0.9691485170771095,
+    0.9927374982667775,
+    0.8795226573524642,
+    0.9877867409625284
   ],
-  "delta": 0.0024714977248435632
+  "delta": 0.0015001818126981759
 }

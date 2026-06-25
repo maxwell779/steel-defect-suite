@@ -22,6 +22,7 @@ from src.metrics import dice_pair
 # (arch, encoder, 실험 디렉터리명) — 풀학습 상위 모델
 MEMBERS = [
     ("deeplabv3plus", "efficientnet-b3", "stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_x3"),
+    ("deeplabv3plus", "efficientnet-b3", "stage2_seg_deeplabv3plus_efficientnet-b3_f0_pseudo_r2"),  # ② pseudo R2(0.9540)
     ("fpn", "se_resnext50_32x4d", "stage2_seg_fpn_se_resnext50_32x4d_f0_sw_f_fpn_se_resnext50_focaltversky_none"),
     ("unet", "se_resnext50_32x4d", "stage2_seg_unet_se_resnext50_32x4d_f0_m2_balanced"),
     ("unet", "se_resnext50_32x4d", "stage2_seg_unet_se_resnext50_32x4d_f0_sw_f_unet_se_resnext50_tvb085"),
