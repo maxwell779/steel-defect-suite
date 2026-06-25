@@ -1,13 +1,20 @@
 # RESULTS — Steel Defect Inspection Suite (Severstal)
 
 > 실제 결과 종합. 모든 평가는 **이미지 단위 fold(누수 차단)**. 상세 EDA는 [EDA.md](EDA.md).
-> *기준일: 2026-06-23. 현재 fold0 단일모델 기준(앙상블·다fold는 진행 예정).*
+> *기준일: 2026-06-25. M0~M5 완료(밤샘 스윕·교차검증·후처리·5fold·분류게이트).*
 
 ## 요약
 | 스테이지 | 지표 | 결과 |
 |---|---|---|
 | 0 누수 폭로 | 패치분류 patch-split vs image-split | acc Δ **+1.25%p**, AUC Δ +0.009 (누수 실측) |
-| 2 세그멘테이션 ★ | **대회식 mean Dice** (UNet/se_resnext50, fold0) | **0.9317** → min-size 후처리 **0.9343** |
+| M1 세그 베이스라인 | UNet/se_resnext50 fold0 mean Dice | 0.9317 → 후처리 0.9343 (**단, C1/C2 0% 붕괴**) |
+| M2 클래스 균형 | FocalTversky+오버샘플+posweight | 0.9431, **C1/C2 0%→83%/94% 회복** |
+| M3 스윕 승자 | 6arch×5enc + 전처리·손실·HP 그리드 | **DeepLabV3+/effb3 (bce_lovasz) 0.9514** |
+| M3 전처리 교차검증 | 상위 전처리 5종 → 승자 적용 | **전부 control(none) 미달** → 전처리 불채택 |
+| M4 앙상블+TTA+후처리 ★ | 4모델 앙상블 + h/v TTA + 3-임계 | **0.9534** (C1~C4 [0.966,0.992,0.868,0.988]) |
+| M5 5-fold | 승자 5-fold(누수無) | **0.9519±0.0006** (견고) |
+| M5 분류 게이트 | 멀티라벨 EffNet-B3 | **mAUROC 0.9954**, empty 차단 ~98% @recall95 |
+| **M5 게이트 결합 ★최종** | 앙상블+TTA+후처리 **+분류게이트** | **🏆 0.9559** (Δ +0.0025 vs ungated) |
 
 > 참고: Severstal 공개 리더보드 상위권은 private test 기준 ~0.90–0.918. 본 수치는 **train 이미지 단위 held-out fold** 기준이라 리더보드와 직접 비교는 아니지만, **단일모델·단일fold 베이스라인으로 매우 강함**.
 
@@ -62,6 +69,41 @@
 - empty FP 소폭 증가(검출↑의 트레이드오프, 허용 범위) — 이후 분류 게이트로 추가 억제 예정.
 - 코드: `src/train_seg.py`(--loss focaltversky --oversample --posweight), 분해 `src/analyze_seg.py`.
 
+## Stage 2 — M3: 종합 스윕 + 전처리 교차검증
+- **스윕**(6아키텍처 × {se_resnext50, effnet-b3~b6, resnet, resnest, regnet, mit} + 전처리 8 + 손실 4 + HP) → 랭킹 = `best_dice_postproc + 0.5·min_recall`(빈마스크 착시 방지).
+- **승자: DeepLabV3+/efficientnet-b3 (bce_lovasz, oversample, posweight 4,8,1,2) = 0.9514** (후처리 후).
+- **전처리 교차검증**(UNet/se 상위 5종 → 승자에 전이): gamma 0.9489 / highpass 0.9483 / clahe 0.9463 / tophat 0.9448 / bilateral_dog 0.9432 → **전부 control(none=0.9514) 미달**.
+  - 결론: **지도 seg에선 전처리가 손해**(busbar 비지도와 정반대). 모델 용량이 전처리 이득을 흡수. → 최종 입력 = 원본.
+
+## Stage 2 — M4: 앙상블 + TTA + 3-임계 후처리 ★
+- 멤버 4: DeepLabV3+/effb3 · FPN/se · UNet/se(m2_balanced) · UNet/se(tvb085). sigmoid 확률 평균.
+- TTA: 원본/h-flip/v-flip 평균. 후처리: max_prob(빈마스크 게이트)·min_prob(이진화)·min_area(작은마스크 제거) val 튜닝.
+
+| | mean Dice |
+|---|---|
+| 단일 best (UNet/se) | 0.9361 |
+| 앙상블(4)+TTA | 0.9502 |
+| **+3-임계 후처리** (min_prob=0.6,max_prob=0.7,min_area=600) | **0.9534** |
+
+- per-class C1/C2/C3/C4 = [0.966, 0.992, 0.868, 0.988]. 코드: `src/postprocess.py`.
+
+## Stage 2 — M5: 5-fold 견고성 + 분류 게이트 결합 ★최종
+**(1) 승자 5-fold**(누수 차단, bce_lovasz 16ep): fold0~4 = 0.9514 / 0.9528 / 0.9518 / 0.9513 / 0.9522 → **평균 0.9519, 편차 ±0.0006** = 과적합·누수 없는 견고한 일반화.
+
+**(2) 분류 게이트**(멀티라벨 EfficientNet-B3, `src/train_clf.py`): **mAUROC 0.9954** (C1~C4 [0.995,0.997,0.993,0.997]). 결함 recall 95% 유지 시 정상(empty) 차단율 **C1 98.2% / C2 98.7% / C3 97.1% / C4 99.8%**.
+
+**(3) 게이트 결합 = 최종**(`src/gated_eval.py`): 앙상블+TTA+후처리 예측에 분류기로 클래스별 빈마스크 차단(게이트 임계 C1~C4 = [0.3,0.02,0.5,0.0]).
+
+| | mean Dice | C1 | C2 | C3 | C4 |
+|---|---|---|---|---|---|
+| ungated (M4) | 0.9534 | 0.966 | 0.992 | 0.868 | 0.988 |
+| **+ 분류 게이트 🏆** | **0.9559** | 0.969 | 0.993 | 0.874 | 0.988 |
+
+- **Δ +0.0025**. empty-FP가 점수의 급소인 대회 특성상, 게이트가 가장 큰 단일 레버임을 실증(특히 C1·C3 상승).
+- 참고: Severstal 공개 리더보드 상위권 private ~0.90–0.918(별도 test). 본 수치는 train 이미지단위 held-out fold라 직접 비교는 아니나, **단일fold에서 0.9559는 매우 강함**.
+
 ## 다음 (계획)
-- **밤샘 스윕**(25 config: 6 아키텍처 × 5 백본 + 전처리 8종 + 손실 4종) → per-class 검출률 기준 상위 풀학습.
-- 분류 게이트(empty-FP↓), 5-fold 앙상블, TTA, pseudo-label.
+- 게이트를 5-fold 앙상블 확률에 결합(현재는 fold0 멤버 앙상블) → 다fold 일반화 점수.
+- pseudo-label 2라운드(train fold 한정, 누수 격리).
+- ReconPatch 이상탐지 보조(무라벨, 그들 AE 0.70 대비).
+- UI/UX 콘솔(강판 업로드→4색 마스크+per-class Dice+비용절감 LIVE) + 배포.

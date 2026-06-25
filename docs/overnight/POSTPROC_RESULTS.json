@@ -1,0 +1,41 @@
+{
+  "members": [
+    "stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_x3",
+    "stage2_seg_fpn_se_resnext50_32x4d_f0_sw_f_fpn_se_resnext50_focaltversky_none",
+    "stage2_seg_unet_se_resnext50_32x4d_f0_m2_balanced",
+    "stage2_seg_unet_se_resnext50_32x4d_f0_sw_f_unet_se_resnext50_tvb085"
+  ],
+  "tta": true,
+  "single_best": 0.9518958102097652,
+  "ensemble_thr05": 0.950227305982688,
+  "ensemble_postproc": 0.9534204935353439,
+  "postproc": {
+    "min_prob": 0.6,
+    "max_prob": 0.7,
+    "min_area": 600
+  },
+  "per_class": [
+    0.965980220465158,
+    0.9919763581438835,
+    0.8681326727942521,
+    0.9875927227380816
+  ],
+  "singles": [
+    [
+      "stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_x3",
+      0.9518958102097652
+    ],
+    [
+      "stage2_seg_fpn_se_resnext50_32x4d_f0_sw_f_fpn_se_resnext50_focaltversky_none",
+      0.9475873658097966
+    ],
+    [
+      "stage2_seg_unet_se_resnext50_32x4d_f0_m2_balanced",
+      0.9398916737359864
+    ],
+    [
+      "stage2_seg_unet_se_resnext50_32x4d_f0_sw_f_unet_se_resnext50_tvb085",
+      0.9360784328168944
+    ]
+  ]
+}
