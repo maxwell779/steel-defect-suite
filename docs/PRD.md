@@ -13,29 +13,29 @@
 **목표**
 - 실제 Kaggle 과제(RLE 마스크, mean-Dice)를 **leak-free**로 풀어 상위권(0.90) 근접
 - 2-stage(분류 게이트 → 세그)로 empty FP 억제 — 대회 점수의 핵심
-- **누수 폭로**: 패치 patch-split vs image-split 점수차를 정량 제시(정직성 차별점)
+- **누수 폭로**: 패치 patch-split vs image-split 점수차를 정량 제시(재현·투명성 차별점)
 - 보조로 무라벨 이상탐지(ReconPatch) — 그들 AE 0.70 추월
 - React 콘솔 + FastAPI LIVE 추론
 
 **비목표**
-- ❌ 리더보드 1위 경쟁(상위권 근접+정직평가로 충분)
+- ❌ 리더보드 1위 경쟁(상위권 근접+엄정한 평가로 충분)
 - ❌ 실시간 라인 연동, 분산학습
 - ❌ 합성 결함 생성(보류, copy-paste 증강만)
 
 **성공 기준 (DoD)**
 - Stage1 분류 게이트: per-class AUROC·F1 + empty 억제율 보고
-- Stage2 세그: **mean Dice ≥ 0.88**, per-class Dice 표, min-size 후처리 ablation
+- Stage2 세그: **mean Dice ≥ 0.88**, per-class Dice 표, min-size 마스크 정제 ablation
 - 누수폭로: patch-split vs image-split Δ 수치
 - Stage3 이상탐지: AUROC > 0.70(그들 AE 대비)
 - 웹: 강판 업로드 → 4색 마스크 오버레이 + per-class Dice + 비용절감 추정 LIVE
-- README 재현법 + 정직 결과표(negative 포함)
+- README 재현법 + 결과표(negative 포함)
 
 ## 3. 아키텍처 — 스테이지
 | 스테이지 | 질문 | 데이터 | 핵심 기법 | 평가 |
 |---|---|---|---|---|
 | **0. 베이스라인/누수폭로** | 다른 팀 재현 | 패치 | LGB·ResNet-18, patch-split vs image-split | 누수 Δ 정량 |
 | **1. 분류 게이트** | 결함 유무/종류 | 원본 이미지 | EffNet-B3~5 / SE-ResNeXt50 멀티라벨 | per-class AUROC·F1, empty 억제율 |
-| **2. 세그멘테이션 ★** | 어디(픽셀) | 원본 + RLE 마스크 | smp FPN/UNet++ × 멀티인코더 앙상블, Lovász/BCE-Dice, TTA, min-size 후처리 | **mean Dice**, per-class Dice |
+| **2. 세그멘테이션 ★** | 어디(픽셀) | 원본 + RLE 마스크 | smp FPN/UNet++ × 멀티인코더 앙상블, Lovász/BCE-Dice, TTA, min-size 마스크 정제 | **mean Dice**, per-class Dice |
 | **3. 이상탐지(보조)** | 무라벨 가능? | 정상만 | ReconPatch/PatchCore | AUROC |
 
 ## 4. 데이터 & 라이선스
@@ -53,7 +53,7 @@
 2. **Segmentation**: 강판 업로드/선택 → **4색 픽셀 마스크 오버레이**(canvas) + per-class Dice + 신뢰도, threshold/min-size 슬라이더 LIVE.
 3. **Classification Gate**: 멀티라벨 확률 막대 + empty 억제 동작 시각화.
 4. **Anomaly(보조)**: ReconPatch heatmap.
-5. **Experiments**: 누수폭로 차트(patch vs image), 손실 비교(Lovász/BCE-Dice), 인코더/앙상블 gain, per-class Dice, 후처리 ablation, "왜 패치분류가 아니라 세그인가".
+5. **Experiments**: 누수폭로 차트(patch vs image), 손실 비교(Lovász/BCE-Dice), 인코더/앙상블 gain, per-class Dice, 마스크 정제 ablation, "왜 패치분류가 아니라 세그인가".
 
 백엔드 FastAPI(smp 모델 `*.pt` 추론) 또는 정적 JSON 폴백. 다크모드·CSV/PDF 내보내기.
 
@@ -73,7 +73,7 @@
 ## 8. 로드맵
 1. M0 EDA + image-level fold + RLE 파싱
 2. M1 베이스라인 + 누수폭로 + 단일 UNet Dice
-3. M2 세그 고도화(모델/손실/후처리/threshold)
+3. M2 세그 고도화(모델/손실/마스크 정제/threshold)
 4. M3 2-stage + 앙상블 + TTA + pseudo-label → 최종 Dice
 5. M4 이상탐지 보조 + negative 정리
 6. M5 웹 UI/UX + README/RESULTS + 배포(Pages/Docker)
@@ -81,7 +81,7 @@
 ## 9. 평가 원칙 (busbar/wafer 계승)
 - **leak-free**: 이미지단위 GroupKFold, threshold val-only
 - **per-class·불균형**: per-class Dice·AUROC, empty FP율, accuracy 단일지표 금지
-- **정직성**: 누수 점수도 그대로 폭로, negative(효과없음) 그대로 보고
+- **재현·투명성**: 누수 점수도 그대로 폭로, negative(효과없음) 그대로 보고
 
 ## 10. 리스크 & 대응
 | 리스크 | 대응 |

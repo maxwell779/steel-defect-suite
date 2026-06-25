@@ -2,7 +2,7 @@
 
 > 목표: KDT 다른 팀(Vision-Q TEAM 1)의 "철강 품질 실패비용 최소화 검수 시스템"을
 > **실제 대회 과제(픽셀 세그멘테이션)** 로 정면 돌파하고, A100 서버와
-> wafer/busbar에서 검증된 *leak-free·per-class·정직보고* 방법론으로 추월한다.
+> wafer/busbar에서 검증된 *leak-free·per-class·결과 그대로 보고* 방법론으로 추월한다.
 > *기준일: 2026-06-23*
 
 ---
@@ -48,7 +48,7 @@
 1. **2-stage = 분류 게이트 → 세그멘테이션**: 먼저 classifier로 "결함 있음/클래스별 유무" 판정해 **빈 이미지를 거른 뒤**, 양성으로 판정된 것만 세그. empty FP 폭증을 막는 정석.
 2. **세그 모델(smp)**: **FPN / UNet / UNet++**, 인코더 **SE-ResNeXt50_32x4d**(bs 32~36), **EfficientNet-B5**(bs 16~20), inceptionv4 등. 상위 앙상블 = 여러 인코더 평균.
 3. **손실**: **Lovász**가 BCE/BCE-Dice보다 public/val에서 "극적으로" 우세. 단, **분류모델과 결합 시엔 BCE+Dice**가 더 좋았다(Lovász가 FP 억제 역할). → 분류게이트 채택 시 **BCE+Dice(0.6·BCE+0.4·(1−Dice))** 기본, Lovász는 게이트 없는 단일모델 부스트용.
-4. **후처리**: **작은 마스크 제거(min mask size threshold)** + 구멍 메우기(hole fill). connected-component는 효과 없었음.
+4. **마스크 정제**: **작은 마스크 제거(min mask size threshold)** + 구멍 메우기(hole fill). connected-component는 효과 없었음.
 5. **TTA**: h/v flip.
 6. **의사라벨(pseudo-labeling) 2라운드**: 상위권 대부분 사용, 유의미한 향상.
 7. **CV**: 5~10 fold, threshold는 val에서만.
@@ -59,7 +59,7 @@
 - **② 다중 아키텍처 앙상블**: 1위 = UNet+FPN × {effnet-b1/b3, resnet34}. 단일 최강 = FPN+se_resnext50.
 - **③ 점진적 crop 학습**: 256×256 → 512×256 → 1024×256 → 풀해상도 순으로 키우며 학습.
 - **④ 블랙 보더 처리**: test에 검은 테두리 이미지多 → 검은 영역 crop(Otsu 임계)해 비-검정 영역만 학습이 더 나음(도메인 시프트).
-- **⑤ 3-임계 후처리**: `max_prob_thresh`(이 값 넘는 픽셀 없으면 마스크 통째 버림) + `min_prob_thresh`(픽셀 이진화) + `min_area_thresh`(작은 마스크 제거). FP 억제의 표준 트릭.
+- **⑤ 3-임계 마스크 정제**: `max_prob_thresh`(이 값 넘는 픽셀 없으면 마스크 통째 버림) + `min_prob_thresh`(픽셀 이진화) + `min_area_thresh`(작은 마스크 제거). FP 억제의 표준 트릭.
 - **⑥ 노이즈 라벨 대응**: 라벨 노이즈가 많아 Lovász/소프트 기법·(고급) Gumbel noise가 도움.
 - 출처: [1st place writeup](https://www.kaggle.com/competitions/severstal-steel-defect-detection/writeups/1st-place-solution), khornlund/TheoViel GitHub, [diyago 블로그](https://diyago.github.io/2019/11/20/kaggle-severstal.html).
 
@@ -69,7 +69,7 @@
 
 ### 3.1 핵심 차별화 3축
 1. **본질 정조준**: 패치분류가 아니라 **픽셀 세그멘테이션 + 대회 Dice**. 리더보드와 1:1 비교.
-2. **누수통제 + 정직평가**: 이미지단위 GroupKFold, per-class Dice, **empty FP율 명시**, negative 결과 그대로 보고(wafer/busbar 계승).
+2. **누수통제 + 엄정한 평가**: 이미지단위 GroupKFold, per-class Dice, **empty FP율 명시**, negative 결과 그대로 보고(wafer/busbar 계승).
 3. **서버 스케일**: 큰 백본(B5+)·풀해상도(256×1600 또는 큰 타일)·앙상블·TTA·pseudo-label·SWA/EMA·AMP·큰 배치.
 
 ### 3.2 파이프라인 (3-스테이지 + 보조)
@@ -77,15 +77,15 @@
 |---|---|---|---|
 | **0. (재현) 베이스라인** | 그들 패치분류 재현 | LGB/ResNet-18 패치분류 (누수 있는 split / 없는 split 둘 다) | **누수가 점수를 얼마나 부풀리는지 정량 폭로** |
 | **1. 분류 게이트** | 결함 있나/어느 클래스 | EfficientNet-B3~B5 / SE-ResNeXt50 멀티라벨(4-logit) | per-class AUROC·F1, **empty 정확 억제율** |
-| **2. 세그멘테이션 ★** | 어디에 (픽셀) | smp FPN/UNet++ × {seresnext50, effnet-b5} 앙상블 + Lovász/BCE-Dice + TTA + min-size 후처리 | **대회 mean Dice**, per-class Dice |
+| **2. 세그멘테이션 ★** | 어디에 (픽셀) | smp FPN/UNet++ × {seresnext50, effnet-b5} 앙상블 + Lovász/BCE-Dice + TTA + min-size 마스크 정제 | **대회 mean Dice**, per-class Dice |
 | **3. 이상탐지(보조)** | 라벨없이 가능? | 우리 강점 **ReconPatch/PatchCore**(정상만 학습) → 무라벨 검출 baseline | AUROC, AE 0.70 대비 우위 |
 
-> Stage0(재현+누수폭로)은 **이 프로젝트의 "정직" 차별점**. "다른 팀 93%는 누수 포함 가능성, 누수 제거 시 XX%"를 수치로 보여주는 게 포트폴리오의 킬러 포인트.
+> Stage0(재현+누수폭로)은 **이 프로젝트의 차별점**. "다른 팀 93%는 누수 포함 가능성, 누수 제거 시 XX%"를 수치로 보여주는 게 포트폴리오의 킬러 포인트.
 
 ### 3.3 불균형·FP 대응 (대회 점수의 핵심)
 - 분류 게이트로 빈 이미지 선제 차단(empty FP의 1차 방어).
 - 세그 손실: BCE+Dice(+Lovász), per-class pos_weight.
-- 후처리: 클래스별 **min mask size**를 val에서 튜닝(작은 거짓 마스크 제거 = Dice 직접 상승).
+- 마스크 정제: 클래스별 **min mask size**를 val에서 튜닝(작은 거짓 마스크 제거 = Dice 직접 상승).
 - 증강: flip, brightness/contrast, **copy-paste(희귀 Class2 결함 합성)**.
 - threshold(분류·픽셀·min-size) 전부 **val에서만** 결정.
 
@@ -98,7 +98,7 @@
 ### 3.5 마일스톤
 1. **M0 데이터·EDA**: RLE 파싱, 클래스/마스크 면적 분포, 빈마스크 비율, 이미지단위 fold 생성.
 2. **M1 베이스라인+누수폭로**: 패치분류 재현(누수/무누수), 단일 UNet(seresnext50) Dice baseline.
-3. **M2 세그 고도화**: FPN/UNet++ × 멀티인코더, 손실/후처리/threshold 튜닝 → 단일 best.
+3. **M2 세그 고도화**: FPN/UNet++ × 멀티인코더, 손실/마스크 정제/threshold 튜닝 → 단일 best.
 4. **M3 2-stage + 앙상블 + TTA + pseudo-label** → 최종 Dice.
 5. **M4 이상탐지 보조**(ReconPatch) + negative 정리.
 6. **M5 UI/UX**(§ PRD) + README/RESULTS + 배포(Pages/Docker).
@@ -106,7 +106,7 @@
 ### 3.6 성공 기준
 - 세그 mean Dice **≥ 0.88**(상위권 0.90 근접), per-class Dice 표.
 - **누수폭로**: 패치 patch-split vs image-split 점수차 정량 보고.
-- empty FP율 명시 + min-size 후처리 기여도 ablation.
+- empty FP율 명시 + min-size 마스크 정제 기여도 ablation.
 - ReconPatch 이상탐지 AUROC > 그들 AE 0.70.
 - 웹 콘솔: 강판 업로드 → 4색 마스크 오버레이 + per-class Dice + 비용절감 추정 LIVE.
 
