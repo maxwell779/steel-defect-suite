@@ -19,3 +19,9 @@ fastapi
 uvicorn
 pydantic
 python-multipart
+
+# web demo
+fastapi
+uvicorn
+python-multipart
+pillow

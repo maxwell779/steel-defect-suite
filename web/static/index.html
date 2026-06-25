@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Steel Inspection Console</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b0f17;--panel:#141b2a;--panel2:#1b2436;--line:#26314a;--tx:#e6edf6;--mut:#8aa0bf;--acc:#3b82f6;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,'Segoe UI',sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:14px 22px;background:linear-gradient(90deg,#101728,#0b0f17);border-bottom:1px solid var(--line)}
+header h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.3px}
+header .sub{color:var(--mut);font-size:12px}
+.badge{margin-left:auto;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--line)}
+.badge.on{background:#0e2a1a;color:var(--ok);border-color:#1d5135}.badge.off{background:#2a1414;color:var(--bad);border-color:#5a2020}
+nav{display:flex;gap:6px;padding:10px 22px;background:var(--panel);border-bottom:1px solid var(--line)}
+nav button{background:none;border:none;color:var(--mut);padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600}
+nav button.active{background:var(--acc);color:#fff}
+main{padding:22px;max-width:1280px;margin:0 auto}
+.tab{display:none}.tab.active{display:block}
+.grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(5,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.kpi .v{font-size:26px;font-weight:800}.kpi .l{color:var(--mut);font-size:12px;margin-top:2px}
+.kpi .d{font-size:12px;margin-top:6px}
+h3{margin:0 0 12px;font-size:15px}.muted{color:var(--mut);font-size:12px}
+.row{display:grid;grid-template-columns:2fr 1fr;gap:16px}@media(max-width:900px){.row{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+canvas#cv{width:100%;background:#000;border-radius:8px;border:1px solid var(--line)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.thumbs img{height:46px;border-radius:6px;border:2px solid transparent;cursor:pointer;opacity:.7}
+.thumbs img.sel{border-color:var(--acc);opacity:1}
+.ctrl{display:flex;flex-direction:column;gap:12px}
+.ctrl label{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+input[type=range]{width:100%}
+.pcbar{display:flex;align-items:center;gap:8px;margin:7px 0}
+.pcbar .sw{width:12px;height:12px;border-radius:3px}.pcbar .nm{width:26px;font-weight:700}
+.bar{flex:1;height:16px;background:var(--panel2);border-radius:8px;overflow:hidden}
+.bar>span{display:block;height:100%}
+.tag{font-size:11px;padding:2px 7px;border-radius:6px;background:var(--panel2);color:var(--mut)}
+.tag.off{background:#2a1414;color:var(--bad)}.tag.on{background:#0e2a1a;color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600}
+.chartbox{position:relative;height:260px}
+.up{display:inline-block;padding:8px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:13px}
+.flex{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.dice{font-size:22px;font-weight:800;color:var(--ok)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛡️ Steel Inspection Console</h1>
+  <div class="sub">Severstal 픽셀 세그멘테이션 · 분류 게이트 · empty-FP 억제</div>
+  <span id="status" class="badge off">모델 확인중…</span>
+</header>
+<nav>
+  <button class="active" data-t="console">통합 콘솔</button>
+  <button data-t="seg">Segmentation</button>
+  <button data-t="gate">Classification Gate</button>
+  <button data-t="exp">Experiments</button>
+</nav>
+<main>
+  <section id="console" class="tab active">
+    <div class="grid kpis" id="kpis"></div>
+    <div class="row" style="margin-top:16px">
+      <div class="card"><h3>결함 큐 (격리 대기)</h3><table id="queue"><thead><tr><th>이미지</th><th>결함 클래스</th><th>mean Dice</th><th>조치</th></tr></thead><tbody></tbody></table></div>
+      <div class="card"><h3>현재 최종 성능</h3>
+        <div class="dice" id="bestdice">0.9559</div><div class="muted">mean Dice (앙상블+TTA+후처리+분류게이트, fold0)</div>
+        <div style="margin-top:14px" class="muted">파이프라인</div>
+        <div class="flex" style="margin-top:6px;font-size:12px">
+          <span class="tag">분류 게이트</span>→<span class="tag">세그 앙상블</span>→<span class="tag">TTA</span>→<span class="tag">3-임계 후처리</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="seg" class="tab">
+    <div class="row">
+      <div class="card">
+        <h3>마스크 오버레이 <span class="muted" id="segid"></span></h3>
+        <div class="thumbs" id="thumbs"></div>
+        <canvas id="cv" width="1600" height="256"></canvas>
+        <div class="flex" style="margin-top:10px">
+          <label class="up">📤 강판 업로드(LIVE)<input type="file" id="file" accept="image/*" hidden></label>
+          <span class="muted" id="livenote"></span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>판정 결과</h3>
+        <div class="flex"><span>mean Dice</span><span class="dice" id="segdice" style="font-size:18px">–</span></div>
+        <div id="pcbars" style="margin-top:10px"></div>
+        <h3 style="margin-top:18px">후처리/게이트 (업로드 LIVE)</h3>
+        <div class="ctrl">
+          <label>min_prob (이진화) <b id="v_min">0.60</b></label><input type="range" id="min_prob" min="0.1" max="0.9" step="0.05" value="0.6">
+          <label>max_prob (빈마스크 게이트) <b id="v_max">0.70</b></label><input type="range" id="max_prob" min="0.3" max="0.95" step="0.05" value="0.7">
+          <label>min_area (작은마스크 제거) <b id="v_area">600</b></label><input type="range" id="min_area" min="0" max="3000" step="100" value="600">
+          <label class="flex"><input type="checkbox" id="gate" checked> 분류 게이트 적용</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gate" class="tab">
+    <div class="card"><h3>분류 게이트 — 멀티라벨 확률 & empty 억제</h3>
+      <p class="muted">분류기가 "이 클래스 결함 없음"으로 판정하면 세그 마스크를 끈다 → 빈마스크 FP 억제(대회 점수 핵심 레버). mAUROC 0.9954.</p>
+      <div id="gatesamples"></div>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <div class="card"><h3>per-class AUROC</h3><div class="chartbox"><canvas id="c_auroc"></canvas></div></div>
+      <div class="card"><h3>empty 차단율 @ 결함 recall 95%</h3><div class="chartbox"><canvas id="c_block"></canvas></div></div>
+    </div>
+  </section>
+
+  <section id="exp" class="tab">
+    <div class="row">
+      <div class="card"><h3>마일스톤별 mean Dice</h3><div class="chartbox"><canvas id="c_ms"></canvas></div></div>
+      <div class="card"><h3>레버별 누적 이득</h3><div class="chartbox"><canvas id="c_gain"></canvas></div></div>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <div class="card"><h3>per-class Dice (게이트 전/후)</h3><div class="chartbox"><canvas id="c_pc"></canvas></div></div>
+      <div class="card"><h3>전처리 교차검증 (지도 seg=손해)</h3><div class="chartbox"><canvas id="c_pp"></canvas></div></div>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <div class="card"><h3>누수 폭로 (patch-split vs image-split)</h3><div class="chartbox"><canvas id="c_leak"></canvas></div></div>
+      <div class="card"><h3>5-fold 견고성</h3><div class="chartbox"><canvas id="c_5f"></canvas></div></div>
+    </div>
+    <div class="card" style="margin-top:16px"><h3>다른 팀(Vision-Q) 대비 우위</h3><table id="vs"><tbody></tbody></table></div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

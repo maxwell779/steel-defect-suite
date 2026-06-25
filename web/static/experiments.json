@@ -1,0 +1,42 @@
+{
+  "leak": {
+    "labels": ["patch-split (누수)", "image-split (정상)"],
+    "auc": [0.9821, 0.9735], "acc": [0.9514, 0.9389], "f1": [0.88, 0.851],
+    "note": "패치 50% overlap을 patch-split하면 인접 패치가 train/test 동시 → +1.25%p 인플레. 본 프로젝트는 이미지단위 fold."
+  },
+  "milestones": {
+    "labels": ["M1 baseline", "M2 균형", "M3 승자", "M4 앙상블+TTA+후처리", "M5 +게이트"],
+    "dice": [0.9343, 0.9431, 0.9514, 0.9534, 0.9559]
+  },
+  "ensemble_gain": {
+    "labels": ["단일 best", "앙상블+TTA", "+3-임계 후처리", "+분류 게이트"],
+    "dice": [0.9361, 0.9502, 0.9534, 0.9559]
+  },
+  "per_class_dice": {
+    "labels": ["C1", "C2", "C3", "C4"],
+    "ungated": [0.966, 0.992, 0.868, 0.988],
+    "gated": [0.969, 0.993, 0.874, 0.988]
+  },
+  "preproc_cross": {
+    "labels": ["none(control)", "gamma", "highpass", "clahe", "tophat", "bilateral_dog"],
+    "dice": [0.9514, 0.9489, 0.9483, 0.9463, 0.9448, 0.9432],
+    "note": "지도 seg에선 전처리가 control 미달 → 불채택 (busbar 비지도와 정반대)."
+  },
+  "gate": {
+    "labels": ["C1", "C2", "C3", "C4"],
+    "auroc": [0.9946, 0.997, 0.9926, 0.9973],
+    "empty_block_at_recall95": [0.982, 0.987, 0.971, 0.998],
+    "mean_auroc": 0.9954
+  },
+  "fivefold": {
+    "labels": ["fold0", "fold1", "fold2", "fold3", "fold4"],
+    "dice": [0.9514, 0.9528, 0.9518, 0.9513, 0.9522], "mean": 0.9519, "std": 0.0006
+  },
+  "vs_other_team": [
+    ["과제", "패치 분류(우회)", "픽셀 세그멘테이션(본질)"],
+    ["지표", "accuracy 86%", "mean Dice 0.9559 + per-class"],
+    ["누수", "의심(patch-split)", "이미지단위 + 누수 폭로"],
+    ["모델", "ResNet-18 / AE 0.70", "DeepLabV3+/SE-ResNeXt 앙상블 + 분류게이트"],
+    ["FP", "미고려", "empty FP 억제(대회 핵심)"]
+  ]
+}

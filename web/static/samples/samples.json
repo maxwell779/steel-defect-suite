@@ -1,0 +1,424 @@
+{
+  "samples": [
+    {
+      "id": "002fc4e19.jpg",
+      "mean_dice": 0.8678,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.9974,
+          "gated_off": false,
+          "area": 1176,
+          "max_prob": 0.8614,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 0.7588,
+          "gt_present": true
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.8222,
+          "gated_off": false,
+          "area": 759,
+          "max_prob": 0.8494,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 0.7125,
+          "gt_present": true
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0007,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.1382,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0441,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.9974,
+        0.8222,
+        0.0007,
+        0.0
+      ],
+      "base": "002fc4e19.jpg",
+      "overlay": "002fc4e19_ov.png"
+    },
+    {
+      "id": "0030401a5.jpg",
+      "mean_dice": 0.9765,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0184,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0252,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.6312,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.2201,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 57612,
+          "max_prob": 0.7961,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 0.9061,
+          "gt_present": true
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.6312,
+        1.0
+      ],
+      "base": "0030401a5.jpg",
+      "overlay": "0030401a5_ov.png"
+    },
+    {
+      "id": "0046839bd.jpg",
+      "mean_dice": 0.9651,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0011,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.1612,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0095,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 5446,
+          "max_prob": 0.778,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.8605,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0466,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0011,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "base": "0046839bd.jpg",
+      "overlay": "0046839bd_ov.png"
+    },
+    {
+      "id": "008ef3d74.jpg",
+      "mean_dice": 0.6664,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.9897,
+          "gated_off": false,
+          "area": 1156,
+          "max_prob": 0.908,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 0.6655,
+          "gt_present": true
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0054,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.9618,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 0.0003,
+          "gt_present": true
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.394,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.3031,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0003,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0496,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.9897,
+        0.0054,
+        0.394,
+        0.0003
+      ],
+      "base": "008ef3d74.jpg",
+      "overlay": "008ef3d74_ov.png"
+    },
+    {
+      "id": "00ac8372f.jpg",
+      "mean_dice": 0.839,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.9707,
+          "gated_off": false,
+          "area": 1206,
+          "max_prob": 0.8753,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 0.6343,
+          "gt_present": true
+        },
+        {
+          "cls": "C2",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 5726,
+          "max_prob": 0.957,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 0.7218,
+          "gt_present": true
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0001,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.171,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0444,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.9707,
+        1.0,
+        0.0001,
+        0.0
+      ],
+      "base": "00ac8372f.jpg",
+      "overlay": "00ac8372f_ov.png"
+    },
+    {
+      "id": "000789191.jpg",
+      "mean_dice": 1.0,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.004,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0036,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0001,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0085,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0012,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.0001,
+        0.0
+      ],
+      "base": "000789191.jpg",
+      "overlay": "000789191_ov.png"
+    }
+  ]
+}
