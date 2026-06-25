@@ -34,7 +34,7 @@
   },
   "vs_other_team": [
     ["과제", "패치 분류(우회)", "픽셀 세그멘테이션(본질)"],
-    ["지표", "accuracy 86%", "mean Dice 0.9559 + per-class"],
+    ["지표", "accuracy 86%", "mean Dice 0.9573 + per-class"],
     ["누수", "의심(patch-split)", "이미지단위 + 누수 폭로"],
     ["모델", "ResNet-18 / AE 0.70", "DeepLabV3+/SE-ResNeXt 앙상블 + 분류게이트"],
     ["FP", "미고려", "empty FP 억제(대회 핵심)"]

@@ -3,6 +3,9 @@
 강판 표면결함을 픽셀 세그멘테이션으로 검출·분류·위치화하는 검수 시스템.
 [Severstal Steel Defect Detection](https://www.kaggle.com/c/severstal-steel-defect-detection)(Kaggle) · 12,568장 256×1600 · 결함 4종 · 멀티라벨.
 
+**라이브 데모(콘솔)**: https://maxwell779.github.io/steel-defect-suite/
+*(GitHub Pages · 정적 — 사전계산 20샘플·전체 차트·해설·GT 비교. 업로드 LIVE 추론은 Docker로 백엔드 실행 시)*
+
 대회 평가지표는 **(이미지×클래스) mean Dice**다. 데이터의 85.9%가 빈 마스크라, 결함을 잘 그리는 것만큼 **정상 영역에 마스크를 안 그리는 것(빈 마스크 FP 억제)** 이 점수를 좌우한다. 기존 KDT 팀은 이 과제를 256×256 패치 이진분류로 바꿔 풀었는데, 본 프로젝트는 원래 과제인 세그멘테이션으로 풀고 이미지단위 fold로 누수를 통제했다.
 
 ## 결과
@@ -46,10 +49,15 @@
 
 ## 데모 — Steel Inspection Console ([web/](web/))
 
-FastAPI 추론 백엔드 + React(Vite) 콘솔. 라이트 테마 대시보드, 차트는 외부 라이브러리 없이 SVG/CSS로 직접 구현. 2개 모드:
+라이브: https://maxwell779.github.io/steel-defect-suite/ · FastAPI 추론 백엔드 + React(Vite) 콘솔. 라이트 테마, 차트는 외부 라이브러리 없이 SVG/CSS로 직접 구현. 2개 모드.
 
-- **운영** — KPI 카드(검증 검사수/결함/정상/최종 Dice/OOF) + Segmentation viewer(샘플·업로드 → 4색 마스크 오버레이, GT/예측 토글, 클래스 on/off, 투명도, 마스크 정제·게이트 슬라이더 LIVE) + 클래스 분포 도넛 + 판정 비율 + 균형학습 검출률 막대 + 게이트 차단율
-- **분석** — 마일스톤 Dice, 레버 이득, per-class(게이트 전/후), 전처리 교차검증, 누수 폭로, 게이트 AUROC, 5-fold 관리도, 타팀 대비표
+**운영 모드** — KPI + Segmentation viewer(4색 마스크 오버레이, GT/예측 토글, 클래스 on/off, 투명도, 마스크 정제·게이트 슬라이더 LIVE, 이전/다음 20샘플) + 클래스 분포·판정 비율 도넛 + 균형학습 검출률 + 게이트 차단율
+
+![운영 모드](docs/images/console_ops.png)
+
+**분석 모드** — 결함 클래스 안내(C1~C4) + 차트 8종(마일스톤 Dice·레버 이득·per-class 게이트 전후·전처리 교차검증·누수 폭로·게이트 AUROC·5-fold 관리도·타팀 대비)에 각각 실험 해설
+
+![분석 모드](docs/images/console_analysis.png)
 
 모든 차트는 실측 결과(`experiments.json`·`dashboard.json`) 기반.
 
