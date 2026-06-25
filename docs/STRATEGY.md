@@ -1,4 +1,5 @@
 # 전략 — Severstal Steel Defect Detection 고도화
+> 라이브 데모: https://maxwell779.github.io/steel-defect-suite/
 
 > 목표: KDT 다른 팀(Vision-Q TEAM 1)의 "철강 품질 실패비용 최소화 검수 시스템"을
 > **실제 대회 과제(픽셀 세그멘테이션)** 로 정면 돌파하고, A100 서버와

@@ -1,4 +1,5 @@
 # RESULTS — Steel Defect Inspection Suite (Severstal)
+> 라이브 데모: https://maxwell779.github.io/steel-defect-suite/
 
 > 실제 결과 종합. 모든 평가는 **이미지 단위 fold(누수 차단)**. 상세 EDA는 [EDA.md](EDA.md).
 > *기준일: 2026-06-25. M0~M5 완료(밤샘 스윕·교차검증·마스크 정제·5fold·분류게이트).*

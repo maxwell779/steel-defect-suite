@@ -1,10 +1,19 @@
 # Steel Defect Inspection Suite — Severstal
 
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-smp%20%7C%20timm-EE4C2C?logo=pytorch&logoColor=white)
+![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=black)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-22c55e?logo=github&logoColor=white)](https://maxwell779.github.io/steel-defect-suite/)
+![mean Dice](https://img.shields.io/badge/mean%20Dice-0.9573%20(OOF%200.9532)-3b82f6)
+![License](https://img.shields.io/badge/License-MIT-64748b)
+
 강판 표면결함을 픽셀 세그멘테이션으로 검출·분류·위치화하는 검수 시스템.
 [Severstal Steel Defect Detection](https://www.kaggle.com/c/severstal-steel-defect-detection)(Kaggle) · 12,568장 256×1600 · 결함 4종 · 멀티라벨.
 
 **라이브 데모(콘솔)**: https://maxwell779.github.io/steel-defect-suite/
 *(GitHub Pages · 정적 — 사전계산 20샘플·전체 차트·해설·GT 비교. 업로드 LIVE 추론은 Docker로 백엔드 실행 시)*
+
+![Steel Inspection Console](docs/images/console_demo.gif)
 
 대회 평가지표는 **(이미지×클래스) mean Dice**다. 데이터의 85.9%가 빈 마스크라, 결함을 잘 그리는 것만큼 **정상 영역에 마스크를 안 그리는 것(빈 마스크 FP 억제)** 이 점수를 좌우한다. 기존 KDT 팀은 이 과제를 256×256 패치 이진분류로 바꿔 풀었는데, 본 프로젝트는 원래 과제인 세그멘테이션으로 풀고 이미지단위 fold로 누수를 통제했다.
 
