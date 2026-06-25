@@ -46,26 +46,29 @@
 
 ## 데모 — Steel Inspection Console ([web/](web/))
 
-FastAPI 추론 백엔드 + 무빌드 SPA(canvas 마스크 오버레이, Chart.js). 4개 화면:
+FastAPI 추론 백엔드 + React(Vite) 콘솔. 라이트 테마 대시보드, 차트는 외부 라이브러리 없이 SVG/CSS로 직접 구현. 2개 모드:
 
-1. 통합 콘솔 — KPI(검사수/결함율/격리/양품률/비용절감) + 결함 큐
-2. Segmentation — 업로드/샘플 → 4색 마스크 + per-class Dice, GT/예측 토글, 클래스 on/off, 투명도, 마스크 정제 슬라이더(LIVE), CSV 내보내기
-3. Classification Gate — 멀티라벨 확률 + 빈 마스크 억제 동작 + AUROC 차트
-4. Experiments — 마일스톤/레버 이득/per-class/전처리 교차검증/누수/5-fold/타팀 대비
+- **운영** — KPI 카드(검증 검사수/결함/정상/최종 Dice/OOF) + Segmentation viewer(샘플·업로드 → 4색 마스크 오버레이, GT/예측 토글, 클래스 on/off, 투명도, 마스크 정제·게이트 슬라이더 LIVE) + 클래스 분포 도넛 + 판정 비율 + 균형학습 검출률 막대 + 게이트 차단율
+- **분석** — 마일스톤 Dice, 레버 이득, per-class(게이트 전/후), 전처리 교차검증, 누수 폭로, 게이트 AUROC, 5-fold 관리도, 타팀 대비표
+
+모든 차트는 실측 결과(`experiments.json`·`dashboard.json`) 기반.
 
 ```bash
-STEEL_DEVICE=cpu python -m web.precompute_samples      # 최초 1회 (샘플 사전계산)
-STEEL_DEVICE=cpu uvicorn web.server:app --port 8010    # http://127.0.0.1:8010
+# 추론 백엔드 (CPU)
+STEEL_DEVICE=cpu python -m web.precompute_samples       # 최초 1회
+STEEL_DEVICE=cpu uvicorn web.server:app --port 8010
+# 개발: cd web/ui && npm install && npm run dev          # http://localhost:5174 (/api,/static → 8010 프록시)
+# 배포: cd web/ui && npm run build → web/server.py 가 dist를 / 에 서빙
 ```
 
 ## 배포
 
-Docker (전체 추론):
+Docker (백엔드 + 빌드된 콘솔 dist 포함):
 ```bash
 docker build -t steel-console .
-docker run -p 8010:8010 -v "$PWD/experiments:/app/experiments" steel-console
+docker run -p 8010:8010 -v "$PWD/experiments:/app/experiments" steel-console   # http://localhost:8010
 ```
-정적 호스팅: `web/static/`는 백엔드 없이도 동작한다(사전계산 샘플·차트·GT 오버레이). 정적 호스트에 올리면 업로드 추론만 비활성되고 나머지는 그대로 동작한다.
+가중치(`experiments/`)가 없으면 사전계산 샘플로 폴백 동작한다.
 
 ## 구조
 
