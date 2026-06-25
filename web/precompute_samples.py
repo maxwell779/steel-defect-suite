@@ -21,26 +21,33 @@ def gt4(iid, ann):
     return m
 
 
-def pick(ann, va_ids):
-    """클래스별 대표 1장 + 멀티클래스 1 + 정상 1."""
+def pick(ann, va_ids, n_defect=15, n_normal=5):
+    """클래스 골고루 + 멀티클래스 + 정상 = 약 20장."""
+    def cls(iid):
+        return {c for c in range(1, 5) if c in ann.get(iid, {}) and str(ann[iid][c]).strip()}
+    defects = [i for i in va_ids if cls(i)]
+    normals = [i for i in va_ids if not cls(i)]
     chosen, seen = [], set()
-    want = {1, 2, 3, 4}
-    for iid in va_ids:
-        cs = {c for c in range(1, 5) if c in ann.get(iid, {}) and str(ann[iid][c]).strip()}
-        if len(cs) >= 2 and "multi" not in seen:    # 멀티클래스
-            chosen.append(iid); seen.add("multi"); continue
-        for c in (cs & want):
-            if f"c{c}" not in seen:
-                chosen.append(iid); seen.add(f"c{c}"); want.discard(c); break
-    for iid in va_ids:                              # 정상(결함 없음)
-        cs = {c for c in range(1, 5) if c in ann.get(iid, {}) and str(ann[iid][c]).strip()}
-        if not cs:
-            chosen.append(iid); break
-    out, s = [], set()
-    for x in chosen:
-        if x not in s:
-            out.append(x); s.add(x)
-    return out
+    # 1) 클래스별 대표 1장씩
+    for c in range(1, 5):
+        for iid in defects:
+            if c in cls(iid) and iid not in seen:
+                chosen.append(iid); seen.add(iid); break
+    # 2) 멀티클래스 2장
+    m = 0
+    for iid in defects:
+        if m >= 2: break
+        if len(cls(iid)) >= 2 and iid not in seen:
+            chosen.append(iid); seen.add(iid); m += 1
+    # 3) 나머지 결함으로 n_defect 채우기
+    for iid in defects:
+        if len([x for x in chosen if x in seen]) >= n_defect: break
+        if iid not in seen:
+            chosen.append(iid); seen.add(iid)
+    chosen = chosen[:n_defect]
+    # 4) 정상 n_normal
+    chosen += normals[:n_normal]
+    return chosen
 
 
 def main():

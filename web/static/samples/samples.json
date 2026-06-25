@@ -71,43 +71,43 @@
       "overlay": "002fc4e19_ov.png"
     },
     {
-      "id": "0030401a5.jpg",
-      "mean_dice": 0.9765,
+      "id": "008ef3d74.jpg",
+      "mean_dice": 0.6664,
       "per_class": [
         {
           "cls": "C1",
-          "present_prob": 0.0,
-          "gated_off": true,
-          "area": 0,
-          "max_prob": 0.0184,
+          "present_prob": 0.9897,
+          "gated_off": false,
+          "area": 1156,
+          "max_prob": 0.908,
           "color": [
             239,
             68,
             68
           ],
-          "dice": 1.0,
-          "gt_present": false
+          "dice": 0.6655,
+          "gt_present": true
         },
         {
           "cls": "C2",
-          "present_prob": 0.0,
+          "present_prob": 0.0054,
           "gated_off": true,
           "area": 0,
-          "max_prob": 0.0252,
+          "max_prob": 0.9618,
           "color": [
             34,
             197,
             94
           ],
-          "dice": 1.0,
-          "gt_present": false
+          "dice": 0.0003,
+          "gt_present": true
         },
         {
           "cls": "C3",
-          "present_prob": 0.6312,
-          "gated_off": false,
+          "present_prob": 0.394,
+          "gated_off": true,
           "area": 0,
-          "max_prob": 0.2201,
+          "max_prob": 0.3031,
           "color": [
             59,
             130,
@@ -118,27 +118,27 @@
         },
         {
           "cls": "C4",
-          "present_prob": 1.0,
+          "present_prob": 0.0003,
           "gated_off": false,
-          "area": 57612,
-          "max_prob": 0.7961,
+          "area": 0,
+          "max_prob": 0.0496,
           "color": [
             234,
             179,
             8
           ],
-          "dice": 0.9061,
-          "gt_present": true
+          "dice": 1.0,
+          "gt_present": false
         }
       ],
       "clf_probs": [
-        0.0,
-        0.0,
-        0.6312,
-        1.0
+        0.9897,
+        0.0054,
+        0.394,
+        0.0003
       ],
-      "base": "0030401a5.jpg",
-      "overlay": "0030401a5_ov.png"
+      "base": "008ef3d74.jpg",
+      "overlay": "008ef3d74_ov.png"
     },
     {
       "id": "0046839bd.jpg",
@@ -211,43 +211,43 @@
       "overlay": "0046839bd_ov.png"
     },
     {
-      "id": "008ef3d74.jpg",
-      "mean_dice": 0.6664,
+      "id": "0030401a5.jpg",
+      "mean_dice": 0.9765,
       "per_class": [
         {
           "cls": "C1",
-          "present_prob": 0.9897,
-          "gated_off": false,
-          "area": 1156,
-          "max_prob": 0.908,
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0184,
           "color": [
             239,
             68,
             68
           ],
-          "dice": 0.6655,
-          "gt_present": true
+          "dice": 1.0,
+          "gt_present": false
         },
         {
           "cls": "C2",
-          "present_prob": 0.0054,
+          "present_prob": 0.0,
           "gated_off": true,
           "area": 0,
-          "max_prob": 0.9618,
+          "max_prob": 0.0252,
           "color": [
             34,
             197,
             94
           ],
-          "dice": 0.0003,
-          "gt_present": true
+          "dice": 1.0,
+          "gt_present": false
         },
         {
           "cls": "C3",
-          "present_prob": 0.394,
-          "gated_off": true,
+          "present_prob": 0.6312,
+          "gated_off": false,
           "area": 0,
-          "max_prob": 0.3031,
+          "max_prob": 0.2201,
           "color": [
             59,
             130,
@@ -258,27 +258,27 @@
         },
         {
           "cls": "C4",
-          "present_prob": 0.0003,
+          "present_prob": 1.0,
           "gated_off": false,
-          "area": 0,
-          "max_prob": 0.0496,
+          "area": 57612,
+          "max_prob": 0.7961,
           "color": [
             234,
             179,
             8
           ],
-          "dice": 1.0,
-          "gt_present": false
+          "dice": 0.9061,
+          "gt_present": true
         }
       ],
       "clf_probs": [
-        0.9897,
-        0.0054,
-        0.394,
-        0.0003
+        0.0,
+        0.0,
+        0.6312,
+        1.0
       ],
-      "base": "008ef3d74.jpg",
-      "overlay": "008ef3d74_ov.png"
+      "base": "0030401a5.jpg",
+      "overlay": "0030401a5_ov.png"
     },
     {
       "id": "00ac8372f.jpg",
@@ -351,6 +351,706 @@
       "overlay": "00ac8372f_ov.png"
     },
     {
+      "id": "03db6bbc3.jpg",
+      "mean_dice": 0.6792,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0929,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0164,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0005,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.7867,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.0002,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 51176,
+          "max_prob": 0.7989,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 0.7166,
+          "gt_present": true
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.0005,
+        1.0
+      ],
+      "base": "03db6bbc3.jpg",
+      "overlay": "03db6bbc3_ov.png"
+    },
+    {
+      "id": "005f19695.jpg",
+      "mean_dice": 0.9746,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.088,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0292,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 31156,
+          "max_prob": 0.8633,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.8984,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0607,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "base": "005f19695.jpg",
+      "overlay": "005f19695_ov.png"
+    },
+    {
+      "id": "00e0398ad.jpg",
+      "mean_dice": 0.9464,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0221,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.005,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 70575,
+          "max_prob": 0.7907,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.7854,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0309,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "base": "00e0398ad.jpg",
+      "overlay": "00e0398ad_ov.png"
+    },
+    {
+      "id": "00f6e702c.jpg",
+      "mean_dice": 0.9124,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0575,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0035,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 3231,
+          "max_prob": 0.8263,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.6496,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0518,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "base": "00f6e702c.jpg",
+      "overlay": "00f6e702c_ov.png"
+    },
+    {
+      "id": "0141c9bf3.jpg",
+      "mean_dice": 0.93,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0504,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.004,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.9997,
+          "gated_off": false,
+          "area": 3435,
+          "max_prob": 0.8298,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.72,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.1587,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.9997,
+        0.0
+      ],
+      "base": "0141c9bf3.jpg",
+      "overlay": "0141c9bf3_ov.png"
+    },
+    {
+      "id": "014ebe543.jpg",
+      "mean_dice": 0.9488,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0428,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0035,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 13734,
+          "max_prob": 0.7929,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.7954,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0003,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0344,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        1.0,
+        0.0003
+      ],
+      "base": "014ebe543.jpg",
+      "overlay": "014ebe543_ov.png"
+    },
+    {
+      "id": "01661826d.jpg",
+      "mean_dice": 0.962,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.9988,
+          "gated_off": false,
+          "area": 5546,
+          "max_prob": 0.9345,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 0.848,
+          "gt_present": true
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0332,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0304,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.2147,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0455,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.9988,
+        0.0,
+        0.0304,
+        0.0
+      ],
+      "base": "01661826d.jpg",
+      "overlay": "01661826d_ov.png"
+    },
+    {
+      "id": "01df77e59.jpg",
+      "mean_dice": 0.8879,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.9724,
+          "gated_off": false,
+          "area": 1179,
+          "max_prob": 0.9251,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 0.5516,
+          "gt_present": true
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0195,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.7342,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.143,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0201,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.9724,
+        0.0,
+        0.7342,
+        0.0
+      ],
+      "base": "01df77e59.jpg",
+      "overlay": "01df77e59_ov.png"
+    },
+    {
+      "id": "01e020dc5.jpg",
+      "mean_dice": 0.9627,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0526,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0317,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.9993,
+          "gated_off": false,
+          "area": 55476,
+          "max_prob": 0.8361,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.8506,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.1093,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.9993,
+        0.0
+      ],
+      "base": "01e020dc5.jpg",
+      "overlay": "01e020dc5_ov.png"
+    },
+    {
+      "id": "0217af9b1.jpg",
+      "mean_dice": 0.9831,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0693,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0292,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 1.0,
+          "gated_off": false,
+          "area": 5180,
+          "max_prob": 0.8342,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 0.9326,
+          "gt_present": true
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0312,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "base": "0217af9b1.jpg",
+      "overlay": "0217af9b1_ov.png"
+    },
+    {
       "id": "000789191.jpg",
       "mean_dice": 1.0,
       "per_class": [
@@ -419,6 +1119,286 @@
       ],
       "base": "000789191.jpg",
       "overlay": "000789191_ov.png"
+    },
+    {
+      "id": "002e73b3c.jpg",
+      "mean_dice": 1.0,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0144,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0038,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.062,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0071,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base": "002e73b3c.jpg",
+      "overlay": "002e73b3c_ov.png"
+    },
+    {
+      "id": "005b92582.jpg",
+      "mean_dice": 1.0,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0031,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0019,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0003,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0274,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0001,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0157,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.0003,
+        0.0001
+      ],
+      "base": "005b92582.jpg",
+      "overlay": "005b92582_ov.png"
+    },
+    {
+      "id": "017d75655.jpg",
+      "mean_dice": 1.0,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.06,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0089,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0485,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0109,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base": "017d75655.jpg",
+      "overlay": "017d75655_ov.png"
+    },
+    {
+      "id": "0198ab92d.jpg",
+      "mean_dice": 1.0,
+      "per_class": [
+        {
+          "cls": "C1",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0143,
+          "color": [
+            239,
+            68,
+            68
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C2",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0033,
+          "color": [
+            34,
+            197,
+            94
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C3",
+          "present_prob": 0.0,
+          "gated_off": true,
+          "area": 0,
+          "max_prob": 0.0264,
+          "color": [
+            59,
+            130,
+            246
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        },
+        {
+          "cls": "C4",
+          "present_prob": 0.0,
+          "gated_off": false,
+          "area": 0,
+          "max_prob": 0.0039,
+          "color": [
+            234,
+            179,
+            8
+          ],
+          "dice": 1.0,
+          "gt_present": false
+        }
+      ],
+      "clf_probs": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base": "0198ab92d.jpg",
+      "overlay": "0198ab92d_ov.png"
     }
   ]
 }
