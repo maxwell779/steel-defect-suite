@@ -46,6 +46,12 @@ def experiments():
     return json.load(open(os.path.join(STATIC, "experiments.json"), encoding="utf-8"))
 
 
+@app.get("/api/dashboard")
+def dashboard():
+    p = os.path.join(STATIC, "dashboard.json")
+    return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {}
+
+
 @app.post("/api/infer")
 async def api_infer(file: UploadFile = File(None), min_prob: float = Form(0.6),
                     max_prob: float = Form(0.7), min_area: int = Form(600),
@@ -70,10 +76,19 @@ def infer_sample(id: str, min_prob: float = 0.6, max_prob: float = 0.7,
         return JSONResponse({"available": False, "error": str(e)}, status_code=400)
 
 
+DIST = os.path.join(HERE, "ui", "dist")
+
+
 @app.get("/")
 def index():
+    # React 빌드(dist) 우선, 없으면 구 정적 SPA
+    idx = os.path.join(DIST, "index.html")
+    if os.path.exists(idx):
+        return FileResponse(idx)
     from fastapi.responses import RedirectResponse
     return RedirectResponse("/static/index.html")
 
 
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
+if os.path.isdir(os.path.join(DIST, "assets")):
+    app.mount("/assets", StaticFiles(directory=os.path.join(DIST, "assets")), name="assets")

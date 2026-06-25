@@ -1,0 +1,60 @@
+{
+  "kpis": {
+    "total": 2514,
+    "defect": 1333,
+    "normal": 1181,
+    "defect_rate": 53.0,
+    "normal_rate": 47.0,
+    "mean_dice_fold0": 0.9573,
+    "oof_dice": 0.9532,
+    "train_images": 12568,
+    "empty_pair_pct": 85.9,
+    "multilabel_imgs": 427
+  },
+  "class_dist": [
+    {
+      "cls": "C1",
+      "name": "Class 1",
+      "count": 897,
+      "color": "#ef4444"
+    },
+    {
+      "cls": "C2",
+      "name": "Class 2",
+      "count": 247,
+      "color": "#22c55e"
+    },
+    {
+      "cls": "C3",
+      "name": "Class 3",
+      "count": 5150,
+      "color": "#3b82f6"
+    },
+    {
+      "cls": "C4",
+      "name": "Class 4",
+      "count": 801,
+      "color": "#f59e0b"
+    }
+  ],
+  "detection": {
+    "labels": [
+      "C1",
+      "C2",
+      "C3",
+      "C4"
+    ],
+    "baseline": [
+      0.0,
+      0.0,
+      93.4,
+      96.2
+    ],
+    "balanced": [
+      83.4,
+      93.9,
+      92.8,
+      98.1
+    ]
+  }
+}
