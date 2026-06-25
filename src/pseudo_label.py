@@ -20,7 +20,7 @@ from src.metrics import mean_dice, per_class_dice
 
 H, W = config.H, config.W
 TEST_IMG = os.path.join(config.DATA, "test_images")
-MEAN = (0.344, 0.344, 0.344); STD = (0.18, 0.18, 0.18)
+MEAN = np.array([0.344, 0.344, 0.344], np.float32); STD = np.array([0.18, 0.18, 0.18], np.float32)
 GATE_THR = [0.3, 0.02, 0.5, 0.0]
 WIN = dict(arch="deeplabv3plus", enc="efficientnet-b3")
 WIN_DIR = "stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_x3"
@@ -28,7 +28,7 @@ WIN_DIR = "stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_
 
 def _norm(img):
     a = (np.asarray(img.convert("RGB").resize((W, H)), np.float32) / 255 - MEAN) / STD
-    return np.ascontiguousarray(a.transpose(2, 0, 1))
+    return np.ascontiguousarray(a.transpose(2, 0, 1)).astype(np.float32)
 
 
 class _ImgDS(Dataset):

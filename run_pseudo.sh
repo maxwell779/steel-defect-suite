@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # ② Pseudo-label 2라운드 — 누수 차단(test→train fold0만, val 격리).
 cd /g/steel-defect-suite
+set -e
 export PYTHONIOENCODING=utf-8
 PY=/g/anaconda3/python.exe
 WIN=stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_x3
