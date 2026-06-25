@@ -78,8 +78,20 @@ th{color:var(--mut);font-weight:600}
         <h3>마스크 오버레이 <span class="muted" id="segid"></span></h3>
         <div class="thumbs" id="thumbs"></div>
         <canvas id="cv" width="1600" height="256"></canvas>
+        <div class="flex" style="margin-top:10px;justify-content:space-between">
+          <div class="flex" id="legend"></div>
+          <div class="flex">
+            <label class="flex muted" style="font-size:12px"><input type="radio" name="view" value="pred" checked> 예측</label>
+            <label class="flex muted" style="font-size:12px"><input type="radio" name="view" value="gt"> 정답(GT)</label>
+          </div>
+        </div>
+        <div class="flex" style="margin-top:10px">
+          <span class="muted" style="font-size:12px">표시:</span><span id="clstoggles" class="flex"></span>
+          <label class="muted" style="font-size:12px;margin-left:auto">투명도 <input type="range" id="opacity" min="0.2" max="1" step="0.1" value="0.85" style="width:90px;vertical-align:middle"></label>
+        </div>
         <div class="flex" style="margin-top:10px">
           <label class="up">📤 강판 업로드(LIVE)<input type="file" id="file" accept="image/*" hidden></label>
+          <button class="up" id="export">⬇️ CSV</button>
           <span class="muted" id="livenote"></span>
         </div>
       </div>
@@ -87,7 +99,7 @@ th{color:var(--mut);font-weight:600}
         <h3>판정 결과</h3>
         <div class="flex"><span>mean Dice</span><span class="dice" id="segdice" style="font-size:18px">–</span></div>
         <div id="pcbars" style="margin-top:10px"></div>
-        <h3 style="margin-top:18px">후처리/게이트 (업로드 LIVE)</h3>
+        <h3 style="margin-top:18px">후처리/게이트 <span class="muted">(샘플·업로드 모두 LIVE)</span></h3>
         <div class="ctrl">
           <label>min_prob (이진화) <b id="v_min">0.60</b></label><input type="range" id="min_prob" min="0.1" max="0.9" step="0.05" value="0.6">
           <label>max_prob (빈마스크 게이트) <b id="v_max">0.70</b></label><input type="range" id="max_prob" min="0.3" max="0.95" step="0.05" value="0.7">

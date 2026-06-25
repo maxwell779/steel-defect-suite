@@ -21,7 +21,7 @@ async function boot() {
 
   const sj = await (await fetch('/api/samples')).json(); SAMPLES = sj.samples || [];
   EXP = await (await fetch('/api/experiments')).json();
-  renderConsole(); renderThumbs(); renderGate(); renderCharts(); renderVs();
+  renderConsole(); renderThumbs(); renderLegend(); renderGate(); renderCharts(); renderVs();
   if (SAMPLES.length) selectSample(0);
 }
 
@@ -46,18 +46,44 @@ function renderConsole() {
   $('#bestdice').textContent = EXP.milestones.dice.at(-1).toFixed(4);
 }
 
-// ── Segmentation ──
+// ── Segmentation (LIVE 레이어 합성: 클래스 on/off·투명도·GT비교) ──
+let SEG = null;            // {base, layers[4], gt[4]|null, per_class, dice}
+let curId = null;          // 현재 샘플 id (null=업로드)
+const vis = [true, true, true, true];
+
 function renderThumbs() {
   $('#thumbs').innerHTML = SAMPLES.map((s, i) =>
     `<img src="/static/samples/${s.base}" data-i="${i}" title="${s.id}">`).join('');
   document.querySelectorAll('#thumbs img').forEach(im => im.onclick = () => selectSample(+im.dataset.i));
 }
-function drawCanvas(baseSrc, ovSrc) {
-  const cv = $('#cv'), ctx = cv.getContext('2d');
-  const b = new Image(); b.onload = () => {
+function renderLegend() {
+  const names = ['C1', 'C2', 'C3', 'C4'];
+  $('#legend').innerHTML = names.map(c => `<span class="flex" style="font-size:12px;gap:4px"><span class="sw" style="background:${rgb(COLORS[c])}"></span>${c}</span>`).join('');
+  $('#clstoggles').innerHTML = names.map((c, i) => `<label class="flex muted" style="font-size:12px;gap:3px"><input type="checkbox" data-c="${i}" checked>${c}</label>`).join('');
+  document.querySelectorAll('#clstoggles input').forEach(cb => cb.onchange = () => { vis[+cb.dataset.c] = cb.checked; redraw(); });
+}
+function params() { return {min_prob: $('#min_prob').value, max_prob: $('#max_prob').value, min_area: $('#min_area').value, gate: $('#gate').checked}; }
+function viewMode() { return (document.querySelector('input[name=view]:checked') || {}).value || 'pred'; }
+
+function redraw() {
+  if (!SEG) return;
+  const cv = $('#cv'), ctx = cv.getContext('2d'), op = +$('#opacity').value;
+  const layers = (viewMode() === 'gt' && SEG.gt) ? SEG.gt : SEG.layers;
+  const b = new Image();
+  b.onload = () => {
     ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(b, 0, 0, cv.width, cv.height);
-    if (ovSrc) { const o = new Image(); o.onload = () => ctx.drawImage(o, 0, 0, cv.width, cv.height); o.src = ovSrc; }
-  }; b.src = baseSrc;
+    (layers || []).forEach((src, i) => {
+      if (!vis[i] || !src) return;
+      const o = new Image();
+      o.onload = () => { ctx.globalAlpha = op; ctx.drawImage(o, 0, 0, cv.width, cv.height); ctx.globalAlpha = 1; };
+      o.src = src;
+    });
+  };
+  b.src = SEG.base;
+}
+function setSeg(r) {
+  SEG = {base: r.base_png, layers: r.class_overlays, gt: r.gt_overlays, per_class: r.per_class, dice: r.mean_dice};
+  renderBars(r.per_class, r.mean_dice); redraw();
 }
 function renderBars(per, dice) {
   $('#segdice').textContent = dice ?? '–';
@@ -67,43 +93,56 @@ function renderBars(per, dice) {
     const g = p.gated_off ? '<span class="tag off">게이트 OFF</span>' : (p.area > 0 ? '<span class="tag on">검출</span>' : '<span class="tag">없음</span>');
     return `<div class="pcbar"><span class="sw" style="background:${rgb(p.color || COLORS[p.cls])}"></span>
       <span class="nm">${p.cls}</span><div class="bar"><span style="width:${prob}%;background:${rgb(p.color || COLORS[p.cls])}"></span></div>
-      <span style="width:140px;text-align:right" class="muted">${prob}%${dtxt} · ${p.area}px</span>${g}</div>`;
+      <span style="width:150px;text-align:right" class="muted">${prob}%${dtxt} · ${p.area}px</span>${g}</div>`;
   }).join('');
 }
-function selectSample(i) {
-  curUpload = null;
+async function selectSample(i) {
+  curUpload = null; const s = SAMPLES[i]; curId = s.id;
   document.querySelectorAll('#thumbs img').forEach((im, j) => im.classList.toggle('sel', j === i));
-  const s = SAMPLES[i];
-  $('#segid').textContent = '· ' + s.id;
-  $('#livenote').textContent = '샘플은 기본 파라미터 고정 — 업로드 시 슬라이더 LIVE';
-  drawCanvas('/static/samples/' + s.base, '/static/samples/' + s.overlay);
-  renderBars(s.per_class, s.mean_dice);
+  $('#segid').textContent = '· ' + s.id; $('#livenote').textContent = 'LIVE 추론중…';
+  try {
+    const q = new URLSearchParams({id: s.id, ...params()}).toString();
+    const r = await (await fetch('/api/infer_sample?' + q)).json();
+    if (!r.available) throw 0;
+    setSeg(r); $('#livenote').textContent = 'LIVE · GT 비교 가능 · 슬라이더 재추론';
+  } catch {
+    SEG = null;                               // 정적 폴백
+    const cv = $('#cv'), ctx = cv.getContext('2d');
+    const b = new Image(); b.onload = () => { ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(b, 0, 0, cv.width, cv.height); const o = new Image(); o.onload = () => ctx.drawImage(o, 0, 0, cv.width, cv.height); o.src = '/static/samples/' + s.overlay; }; b.src = '/static/samples/' + s.base;
+    renderBars(s.per_class, s.mean_dice); $('#livenote').textContent = '정적 폴백(모델 미로드)';
+  }
 }
-
-// 업로드 LIVE
-$('#file').onchange = e => { curUpload = e.target.files[0]; if (curUpload) runInfer(); };
+$('#file').onchange = e => { curUpload = e.target.files[0]; curId = null; if (curUpload) runUpload(); };
+async function runUpload() {
+  if (!curUpload) return;
+  $('#segid').textContent = '· 업로드'; $('#livenote').textContent = 'LIVE 추론중…';
+  const p = params(), fd = new FormData(); fd.append('file', curUpload);
+  fd.append('min_prob', p.min_prob); fd.append('max_prob', p.max_prob);
+  fd.append('min_area', p.min_area); fd.append('gate', p.gate);
+  try {
+    const r = await (await fetch('/api/infer', {method: 'POST', body: fd})).json();
+    if (!r.available) { $('#livenote').textContent = '모델 미로드 — 업로드 추론 불가'; return; }
+    setSeg(r); $('#livenote').textContent = 'LIVE · 슬라이더 재추론 (업로드는 GT 없음)';
+  } catch { $('#livenote').textContent = '추론 실패'; }
+}
 ['min_prob', 'max_prob', 'min_area'].forEach(id => $('#' + id).oninput = () => {
   $('#v_min').textContent = (+$('#min_prob').value).toFixed(2);
   $('#v_max').textContent = (+$('#max_prob').value).toFixed(2);
-  $('#v_area').textContent = $('#min_area').value;
-  if (curUpload) debounce();
+  $('#v_area').textContent = $('#min_area').value; debounce();
 });
-$('#gate').onchange = () => { if (curUpload) runInfer(); };
-let t; function debounce() { clearTimeout(t); t = setTimeout(runInfer, 350); }
-async function runInfer() {
-  if (!curUpload) return;
-  $('#livenote').textContent = 'LIVE 추론중…';
-  const fd = new FormData();
-  fd.append('file', curUpload);
-  fd.append('min_prob', $('#min_prob').value); fd.append('max_prob', $('#max_prob').value);
-  fd.append('min_area', $('#min_area').value); fd.append('gate', $('#gate').checked);
-  try {
-    const r = await (await fetch('/api/infer', {method:'POST', body:fd})).json();
-    if (!r.available) { $('#livenote').textContent = '모델 미로드 — 업로드 추론 불가(정적 폴백 모드)'; return; }
-    $('#segid').textContent = '· 업로드'; $('#livenote').textContent = 'LIVE: 슬라이더 조절 시 재추론';
-    drawCanvas(r.base_png, r.overlay_png); renderBars(r.per_class, r.mean_dice);
-  } catch { $('#livenote').textContent = '추론 실패'; }
-}
+$('#gate').onchange = refetch;
+$('#opacity').oninput = redraw;
+document.querySelectorAll('input[name=view]').forEach(r => r.onchange = redraw);
+let t; function debounce() { clearTimeout(t); t = setTimeout(refetch, 350); }
+function refetch() { if (curUpload) runUpload(); else if (curId != null) { const i = SAMPLES.findIndex(s => s.id === curId); if (i >= 0) selectSample(i); } }
+$('#export').onclick = () => {
+  if (!SEG) return;
+  const rows = [['class', 'present_prob', 'dice', 'area', 'gated_off']].concat(
+    SEG.per_class.map(p => [p.cls, p.present_prob, p.dice ?? '', p.area, p.gated_off]));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([rows.map(r => r.join(',')).join('\n')], {type: 'text/csv'}));
+  a.download = (curId || 'upload') + '_result.csv'; a.click();
+};
 
 // ── Gate 탭 ──
 function renderGate() {

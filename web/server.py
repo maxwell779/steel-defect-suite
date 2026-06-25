@@ -9,10 +9,23 @@ from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
 from web import infer
+import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 STATIC = os.path.join(HERE, "static")
 app = FastAPI(title="Steel Inspection Console")
+_ann = {"a": None}
+
+
+def _gt4(iid):
+    from src import config, data
+    if _ann["a"] is None:
+        _ann["a"] = data.load_annotations()
+    m = np.zeros((4, config.H, config.W), np.uint8)
+    for c in range(1, 5):
+        if c in _ann["a"].get(iid, {}):
+            m[c - 1] = data.rle_decode(_ann["a"][iid][c])
+    return m, os.path.join(config.TRAIN_IMG, iid)
 
 
 @app.get("/api/health")
@@ -43,6 +56,18 @@ async def api_infer(file: UploadFile = File(None), min_prob: float = Form(0.6),
     r = infer.infer(img, min_prob=min_prob, max_prob=max_prob,
                     min_area=int(min_area), use_gate=gate)
     return r
+
+
+@app.get("/api/infer_sample")
+def infer_sample(id: str, min_prob: float = 0.6, max_prob: float = 0.7,
+                 min_area: int = 600, gate: bool = True):
+    try:
+        g, path = _gt4(id)
+        img = Image.open(path)
+        return infer.infer(img, min_prob=min_prob, max_prob=max_prob,
+                           min_area=int(min_area), use_gate=gate, gt4=g)
+    except Exception as e:
+        return JSONResponse({"available": False, "error": str(e)}, status_code=400)
 
 
 @app.get("/")

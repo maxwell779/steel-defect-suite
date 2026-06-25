@@ -60,7 +60,7 @@ def infer(pil_img, min_prob=0.6, max_prob=0.7, min_area=600, use_gate=True, gt4=
         seg_p = torch.sigmoid(st["seg"](xt))[0].cpu().numpy()          # (4,H,W)
         clf_p = torch.sigmoid(st["clf"](xt))[0].cpu().numpy()          # (4,)
     overlay = np.zeros((H, W, 4), np.uint8)
-    per_class = []
+    per_class, class_overlays, gt_overlays = [], [], []
     for c in range(4):
         pc = seg_p[c]
         gated = use_gate and clf_p[c] < GATE_THR[c]
@@ -71,6 +71,8 @@ def infer(pil_img, min_prob=0.6, max_prob=0.7, min_area=600, use_gate=True, gt4=
             if mask.sum() < min_area:
                 mask = np.zeros((H, W), bool)
         overlay[mask] = (*COLORS[c], 150)
+        layer = np.zeros((H, W, 4), np.uint8); layer[mask] = (*COLORS[c], 180)
+        class_overlays.append(_png(layer))
         info = {"cls": CLASS_NAMES[c], "present_prob": round(float(clf_p[c]), 4),
                 "gated_off": bool(gated), "area": int(mask.sum()),
                 "max_prob": round(float(pc.max()), 4), "color": COLORS[c]}
@@ -79,10 +81,14 @@ def infer(pil_img, min_prob=0.6, max_prob=0.7, min_area=600, use_gate=True, gt4=
             inter = (mask & g).sum()
             info["dice"] = round(float((2 * inter + 1) / (mask.sum() + g.sum() + 1)), 4)
             info["gt_present"] = bool(g.any())
+            gl = np.zeros((H, W, 4), np.uint8); gl[g] = (*COLORS[c], 180)
+            gt_overlays.append(_png(gl))
         per_class.append(info)
     return {"available": True, "per_class": per_class,
             "clf_probs": [round(float(p), 4) for p in clf_p],
             "base_png": _png(base_rgb), "overlay_png": _png(overlay),
+            "class_overlays": class_overlays,
+            "gt_overlays": gt_overlays if gt4 is not None else None,
             "mean_dice": round(float(np.mean([p["dice"] for p in per_class])), 4)
             if gt4 is not None else None}
 
