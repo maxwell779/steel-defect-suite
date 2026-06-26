@@ -6,3 +6,5 @@
 *.pt binary
 *.pth binary
 *.ico binary
+experiments/stage1_clf_efficientnet_b3_f0/best.pt filter=lfs diff=lfs merge=lfs -text
+experiments/stage2_seg_deeplabv3plus_efficientnet-b3_f0_sw_f_deeplabv3plus_effb3_x3/best.pt filter=lfs diff=lfs merge=lfs -text
