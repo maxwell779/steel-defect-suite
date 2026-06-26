@@ -1,0 +1,29 @@
+{
+  "alpha": 0.1,
+  "target_coverage": 0.9,
+  "n_cal": 1257,
+  "n_eval": 1257,
+  "per_class": [
+    {
+      "class": "C1",
+      "q": 0.0,
+      "empirical_coverage": 0.916
+    },
+    {
+      "class": "C2",
+      "q": 0.0,
+      "empirical_coverage": 0.922
+    },
+    {
+      "class": "C3",
+      "q": 0.052,
+      "empirical_coverage": 0.911
+    },
+    {
+      "class": "C4",
+      "q": 0.0,
+      "empirical_coverage": 0.914
+    }
+  ],
+  "mean_coverage": 0.916
+}

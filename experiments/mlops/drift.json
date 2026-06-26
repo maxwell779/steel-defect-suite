@@ -1,0 +1,36 @@
+{
+  "n_train": 900,
+  "n_test": 900,
+  "dataset_drift": true,
+  "drift_share": 0.75,
+  "features": [
+    {
+      "feature": "mean_brightness",
+      "psi": 0.3767,
+      "ks_stat": 0.2478,
+      "ks_p": 0.0,
+      "level": "alert"
+    },
+    {
+      "feature": "contrast_std",
+      "psi": 0.0654,
+      "ks_stat": 0.0778,
+      "ks_p": 0.0086,
+      "level": "stable"
+    },
+    {
+      "feature": "dark_ratio",
+      "psi": 0.3598,
+      "ks_stat": 0.24,
+      "ks_p": 0.0,
+      "level": "alert"
+    },
+    {
+      "feature": "p95_bright",
+      "psi": 0.3489,
+      "ks_stat": 0.2633,
+      "ks_p": 0.0,
+      "level": "alert"
+    }
+  ]
+}
