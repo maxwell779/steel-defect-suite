@@ -4,7 +4,7 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-smp%20%7C%20timm-EE4C2C?logo=pytorch&logoColor=white)
 ![React](https://img.shields.io/badge/React-Vite-61DAFB?logo=react&logoColor=black)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-22c55e?logo=github&logoColor=white)](https://maxwell779.github.io/steel-defect-suite/)
-![mean Dice](https://img.shields.io/badge/mean%20Dice-0.9573%20(OOF%200.9532)-3b82f6)
+![mean Dice](https://img.shields.io/badge/mean%20Dice-0.9573%20%28OOF%200.9532%29-3b82f6)
 ![License](https://img.shields.io/badge/License-MIT-64748b)
 
 강판 표면결함을 픽셀 세그멘테이션으로 검출·분류·위치화하는 검수 시스템.
